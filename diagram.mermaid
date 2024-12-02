@@ -1,0 +1,84 @@
+graph TD
+    %% Styling
+    classDef entity fill:#e1f5fe,stroke:#01579b,stroke-width:2px
+    classDef alias fill:#fff3e0,stroke:#ff6f00,stroke-width:2px
+    classDef backend fill:#f3e5f5,stroke:#7b1fa2,stroke-width:2px
+    classDef group fill:#e8f5e9,stroke:#2e7d32,stroke-width:2px
+    classDef policy fill:#fce4ec,stroke:#c2185b,stroke-width:2px
+    classDef external fill:#e8eaf6,stroke:#3949ab,stroke-width:2px
+
+    %% Main Entity
+    subgraph Core_Identity
+        AARON["vault_identity_entity:<br/>aaron"]
+        AARON_POLICY["vault_policy:<br/>user-aaron-access"]
+    end
+
+    %% LDAP Path
+    subgraph LDAP_Flow
+        subgraph LDAP_Vault_Components
+            LDAP_ALIAS["vault_identity_entity_alias:<br/>aaron_ldap_alias"]
+            LDAP_BACKEND["vault_ldap_auth_backend:<br/>ldap"]
+            GROUP_SEA["vault_ldap_auth_backend_group:<br/>sea"]
+            SEA_POLICY["vault_policy:<br/>team-sea-access"]
+        end
+
+        subgraph LDAP_External
+            LDAP_SERVER["LDAP Server:<br/>ldap-service"]
+            LDAP_SEA_GROUP["LDAP Group:<br/>cn=sea,ou=groups,dc=hashibank,dc=com"]
+            LDAP_USER_AARON["LDAP User:<br/>cn=aaron,ou=users,dc=hashibank,dc=com"]
+        end
+    end
+
+    %% OIDC/GitLab Path
+    subgraph OIDC_Flow
+        subgraph OIDC_Vault_Components
+            OIDC_ALIAS["vault_identity_entity_alias:<br/>aaron_oidc_alias"]
+            OIDC_BACKEND["vault_jwt_auth_backend:<br/>oidc"]
+            SEA_ROLE["vault_jwt_auth_backend_role:<br/>sea-role"]
+            SEA_GITLAB_GROUP["vault_identity_group:<br/>gitlab-sea-group"]
+            SEA_GITLAB_ALIAS["vault_identity_group_alias:<br/>sea_gitlab_group_alias"]
+            AARON_PRIVILEGED_POLICY["vault_policy:<br/>user-aaron-privileged-access"]
+        end
+
+        subgraph GitLab_External
+            GITLAB["GitLab"]
+            GITLAB_GROUP["GitLab Project Group:<br/>sea7861027"]
+            GITLAB_USER_AARON["GitLab User:<br/>aaron"]
+        end
+    end
+
+    %% Core Identity Relationships
+    AARON --> |"has alias"| LDAP_ALIAS
+    AARON --> |"has alias"| OIDC_ALIAS
+    AARON --> |"assigned policy"| AARON_POLICY
+
+    %% LDAP Flow Relationships
+    LDAP_ALIAS --> |"authenticates via"| LDAP_BACKEND
+    GROUP_SEA --> |"group in"| LDAP_BACKEND
+    GROUP_SEA --> |"assigned policy"| SEA_POLICY
+    GROUP_SEA --> |"linked to external group"| LDAP_SEA_GROUP
+    LDAP_USER_AARON --> |"member of"| LDAP_SEA_GROUP
+    LDAP_SEA_GROUP --> |"exists in"| LDAP_SERVER
+
+    %% OIDC Flow Relationships
+    OIDC_ALIAS --> |"authenticates via"| SEA_ROLE
+    SEA_ROLE --> |"role defined in"| OIDC_BACKEND
+    SEA_GITLAB_GROUP --> |"assigned policy"| AARON_PRIVILEGED_POLICY
+    SEA_GITLAB_GROUP --> |"assigned policy"| SEA_POLICY
+    SEA_GITLAB_ALIAS --> |"linked to Vault group"| SEA_GITLAB_GROUP
+    OIDC_BACKEND --> |"linked to GitLab group"| SEA_GITLAB_ALIAS
+    SEA_GITLAB_ALIAS --> |"linked to external group"| GITLAB_GROUP
+    GITLAB_USER_AARON --> |"member of"| GITLAB_GROUP
+    GITLAB_GROUP --> |"exists in"| GITLAB
+
+    %% Apply styles
+    class AARON entity
+    class LDAP_ALIAS,OIDC_ALIAS alias
+    class LDAP_BACKEND,OIDC_BACKEND backend
+    class SEA_GITLAB_GROUP group
+    class SEA_GITLAB_ALIAS,SEA_ROLE alias
+    class AARON_POLICY,AARON_PRIVILEGED_POLICY,SEA_POLICY policy
+    class GROUP_SEA group
+    class LDAP_SERVER,LDAP_SEA_GROUP,LDAP_USER_AARON,GITLAB,GITLAB_GROUP,GITLAB_USER_AARON external
+    
+    
