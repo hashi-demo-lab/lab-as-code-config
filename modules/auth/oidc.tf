@@ -1,5 +1,5 @@
 resource "vault_jwt_auth_backend" "oidc" {
-  path               = "oidc"
+  path               = "oidc" 
   type               = "oidc"
   oidc_discovery_url = "https://gitlab.com"
   oidc_client_id     = var.oidc_client_id
@@ -16,34 +16,19 @@ resource "vault_jwt_auth_backend_role" "sea-role" {
     "http://localhost:8250/oidc/callback",
     "https://vault-dc1.hashibank.com/ui/vault/auth/oidc/oidc/callback"
   ]
-  groups_claim       = "groups" # Use the `groups` claim for mapping group memberships
+
   user_claim = "email"
+  groups_claim       = "groups" # Use the `groups` claim for mapping group memberships
   claim_mappings = {
     "email" = "email"
     "name"  = "name"
   }
-  
-  # WORKS
-  # bound_claims = {
-  #   "groups_direct" = join(", ", ["hashi-demo1","sea7861027"])
-  # }
-
-  bound_claims = {
-    "groups_direct" = join(", ", ["hashi-demo1","sea7861027"])
-  }
-  
-  # WORKS
-  # bound_claims = {
-  #   "groups_direct" = "hashi-demo1,sea7861027" # Explicit string
-  # }
-
-  # # DOES NOT WORK
-  # bound_claims = {
-  #   "groups_direct" = jsonencode(["hashi-demo1", "sea7861027"])
-  # }
 
   bound_claims_type = "glob" # Apply glob matching for claim values
-  #disable_bound_claims_parsing = true
+  bound_claims = {
+    "groups_direct" = join(", ", ["hashi-demo1", "sea7861027"])
+  }
+  
 }
 
 resource "vault_identity_group" "sea_gitlab_group" {
