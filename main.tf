@@ -1,3 +1,12 @@
+# module "Kubernetes" {
+#   source = "./modules/kubernetes"
+
+#   role_bindings   = local.role_bindings
+#   roles           = local.roles
+#   serviceaccounts = local.serviceaccounts
+
+# }
+
 module "auth" {
   source = "./modules/auth"
 
@@ -5,15 +14,24 @@ module "auth" {
   oidc_client_secret = var.oidc_client_secret
 }
 
+module "identities" {
+  source     = "./modules/identities"
+  depends_on = [module.auth]
+
+  ldap_accessor    = module.auth.ldap_accessor
+  oidc_accessor    = module.auth.oidc_accessor
+  k8s_jwt_accessor = module.auth.k8s_jwt_accessor
+}
+
 module "policies" {
-  source     = "./modules/policy"
+  source = "./modules/policy"
 
   depends_on = [module.auth]
 }
 
 module "secret_engines" {
-  source              = "./modules/secret_engines"
-  
+  source = "./modules/secret_engines"
+
   kv_mount_path       = var.kv_mount_path
   team_secrets_path   = var.team_secrets_path
   aarons_secrets_path = var.aarons_secrets_path
