@@ -14,7 +14,7 @@ resource "vault_identity_entity_alias" "aaron_ldap_alias" {
 }
 
 resource "vault_identity_entity_alias" "aaron_oidc_alias" {
-  name           = "aaron.evans@hashicorp.com"
+  name           = ""
   mount_accessor = var.oidc_accessor
   canonical_id   = vault_identity_entity.aaron.id
   
@@ -36,7 +36,7 @@ resource "vault_identity_entity_alias" "simon_ldap_alias" {
 }
 
 resource "vault_identity_entity_alias" "simon_oidc_alias" {
-  name           = "simon.lynch@hashicorp.com"
+  name           = ""
   mount_accessor = var.oidc_accessor
   canonical_id   = vault_identity_entity.simon.id
 }
