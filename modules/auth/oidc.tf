@@ -25,9 +25,9 @@ resource "vault_jwt_auth_backend_role" "sea-role" {
   }
 
   bound_claims_type = "glob" # Apply glob matching for claim values
-  bound_claims = {
-    "groups_direct" = join(", ", ["hashi-demo1", "sea7861027"])
-  }
+  # bound_claims = {
+  #   "groups_direct" = join(", ", ["hashi-demo1", "sea7861027"])
+  # }
   
 }
 
