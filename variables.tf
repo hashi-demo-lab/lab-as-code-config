@@ -1,3 +1,15 @@
+variable "kube_config_path" {
+  type        = string
+  description = "Path to the kubeconfig file"
+  default     = "~/.kube/config" # Default path on Mac
+}
+
+variable "kube_config_context" {
+  type        = string
+  description = "Kubeconfig context to use"
+  default     = "docker-desktop"
+}
+
 variable "oidc_client_id" {
   description = "The OIDC client ID"
   type        = string
@@ -38,3 +50,4 @@ variable "users" {
   }))
   description = "A map of users to create in Vault."
 }
+
