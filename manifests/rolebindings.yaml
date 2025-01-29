@@ -1,0 +1,116 @@
+# rolebindings.yaml
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app1-demo-rolebinding
+  namespace: app1
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: app1-demo-role
+subjects:
+  - kind: ServiceAccount
+    name: app1-service-a
+    namespace: app1
+  - kind: ServiceAccount
+    name: app1-service-b
+    namespace: app1
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app2-demo-rolebinding
+  namespace: app2
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: app2-demo-role
+subjects:
+  - kind: ServiceAccount
+    name: app2-service-a
+    namespace: app2
+  - kind: ServiceAccount
+    name: app2-service-b
+    namespace: app2
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app3-frontend-demo-rolebinding
+  namespace: app3-frontend
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: app3-frontend-demo-role
+subjects:
+  - kind: ServiceAccount
+    name: app3-service
+    namespace: app3-frontend
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app3-backend-demo-rolebinding
+  namespace: app3-backend
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: app3-backend-demo-role
+subjects:
+  - kind: ServiceAccount
+    name: app3-service
+    namespace: app3-backend
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app4-web-rolebinding
+  namespace: app4-web
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: app4-web-role
+subjects:
+  - kind: ServiceAccount
+    name: app4-web-service-a
+    namespace: app4-web
+  - kind: ServiceAccount
+    name: app4-web-service-b
+    namespace: app4-web
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app4-api-rolebinding
+  namespace: app4-api
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: app4-api-role
+subjects:
+  - kind: ServiceAccount
+    name: app4-api-service-a
+    namespace: app4-api
+  - kind: ServiceAccount
+    name: app4-api-service-b
+    namespace: app4-api
+  - kind: ServiceAccount
+    name: app4-api-service-c
+    namespace: app4-api
+---
+apiVersion: rbac.authorization.k8s.io/v1
+kind: RoleBinding
+metadata:
+  name: app4-db-rolebinding
+  namespace: app4-db
+roleRef:
+  apiGroup: rbac.authorization.k8s.io
+  kind: Role
+  name: app4-db-role
+subjects:
+  - kind: ServiceAccount
+    name: app4-db-service-a
+    namespace: app4-db
+  - kind: ServiceAccount
+    name: app4-db-service-b
+    namespace: app4-db
