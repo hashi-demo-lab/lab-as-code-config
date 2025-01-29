@@ -1,11 +1,7 @@
-# module "Kubernetes" {
-#   source = "./modules/kubernetes"
-
-#   role_bindings   = local.role_bindings
-#   roles           = local.roles
-#   serviceaccounts = local.serviceaccounts
-
-# }
+module "kubernetes_resources" {
+  source             = "./modules/kubernetes"
+  manifest_directory = "./manifests"
+}
 
 module "auth" {
   source = "./modules/auth"
