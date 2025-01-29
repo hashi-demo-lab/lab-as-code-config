@@ -1,14 +1,5 @@
-variable "role_bindings" {
-  description = "Content of the RoleBindings manifest"
+variable "manifest_directory" {
+  description = "Path to the directory containing Kubernetes manifest files"
   type        = string
-}
-
-variable "roles" {
-  description = "Content of the Roles manifest"
-  type        = string
-}
-
-variable "serviceaccounts" {
-  description = "Content of the ServiceAccounts manifest"
-  type        = string
+  default     = "./manifests"
 }
