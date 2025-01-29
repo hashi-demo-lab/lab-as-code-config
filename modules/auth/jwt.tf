@@ -1,0 +1,114 @@
+resource "vault_jwt_auth_backend" "k8s_jwt" {
+  description        = "Kubernetes JWT Auth Backend"
+  path               = "k8s_jwt"
+  oidc_discovery_url = "https://kubernetes.default.svc.cluster.local"
+  bound_issuer       = "https://kubernetes.default.svc.cluster.local"
+  oidc_discovery_ca_pem = base64decode(
+    yamldecode(file("~/.kube/config"))["clusters"][0]["cluster"]["certificate-authority-data"]
+  )
+}
+
+resource "vault_jwt_auth_backend_role" "app1_role" {
+  backend                   = vault_jwt_auth_backend.k8s_jwt.path
+  role_name                 = "app1"
+  role_type                 = "jwt"
+  bound_audiences          = ["https://kubernetes.default.svc.cluster.local"]
+  user_claim               = "/kubernetes.io/serviceaccount/name"
+  user_claim_json_pointer  = true
+  token_policies           = ["access-aaron-namespace-secrets"]
+
+  # Allows wildcards or regex in bound_claims
+  bound_claims_type = "glob"
+
+  bound_claims = {
+    # Match any service account starting with "app1-service-"
+    "/kubernetes.io/serviceaccount/name" = "app1-service-*"
+    # Restrict to the "app1" namespace
+    "/kubernetes.io/namespace"          = "app1"
+  }
+}
+
+resource "vault_jwt_auth_backend_role" "app2_role" {
+  backend         = vault_jwt_auth_backend.k8s_jwt.path
+  role_name       = "app2"
+  role_type       = "jwt"
+  bound_audiences = ["https://kubernetes.default.svc.cluster.local"]
+  user_claim      = "/kubernetes.io/namespace"
+  user_claim_json_pointer = true
+  token_policies  = ["access-aaron-namespace-secrets"]
+  # Allows wildcards or regex in bound_claims
+  bound_claims_type = "glob"
+  
+  bound_claims = {
+    "/kubernetes.io/serviceaccount/name" : "app2-service-*",
+    "/kubernetes.io/namespace"          : "app2"
+  }
+}
+
+resource "vault_jwt_auth_backend_role" "app3_role" {
+  backend                  = vault_jwt_auth_backend.k8s_jwt.path
+  role_name                = "app3"
+  role_type                = "jwt"
+  bound_audiences         = ["https://kubernetes.default.svc.cluster.local"]
+  
+  # Use the nested service account name as the user claim
+  user_claim              = "/kubernetes.io/serviceaccount/name"
+  user_claim_json_pointer = true
+  token_policies          = ["access-aaron-namespace-secrets"]
+
+  # Enables wildcard matching for claims
+  bound_claims_type = "glob"
+
+  bound_claims = {
+    # The SA name must be exactly 'app3-service'
+    "/kubernetes.io/serviceaccount/name" = "app3-service"
+
+    # The namespace must match 'app3-*' (e.g. app3-frontend or app3-backend)
+    "/kubernetes.io/namespace" = "app3-*"
+  }
+}
+
+resource "vault_jwt_auth_backend_role" "app4_web_role" {
+  backend         = vault_jwt_auth_backend.k8s_jwt.path
+  role_name       = "app4-web"
+  role_type       = "jwt"
+  bound_audiences = ["https://kubernetes.default.svc.cluster.local"]
+  user_claim      = "/kubernetes.io/namespace"
+  user_claim_json_pointer = true
+  token_policies  = ["access-aaron-namespace-secrets"]
+  bound_claims_type = "glob"
+  bound_claims = {
+    "/kubernetes.io/serviceaccount/name" : "app4-web-service-*",
+    "/kubernetes.io/namespace"          : "app4-web"
+  }
+}
+
+resource "vault_jwt_auth_backend_role" "app4_api_role" {
+  backend         = vault_jwt_auth_backend.k8s_jwt.path
+  role_name       = "app4-api"
+  role_type       = "jwt"
+  bound_audiences = ["https://kubernetes.default.svc.cluster.local"]
+  user_claim      = "/kubernetes.io/namespace"
+  user_claim_json_pointer = true
+  token_policies  = ["access-aaron-namespace-secrets"]
+  bound_claims_type = "glob"
+  bound_claims = {
+    "/kubernetes.io/serviceaccount/name" : "app4-api-service-*",
+    "/kubernetes.io/namespace"          : "app4-api"
+  }
+}
+
+resource "vault_jwt_auth_backend_role" "app4_db_role" {
+  backend         = vault_jwt_auth_backend.k8s_jwt.path
+  role_name       = "app4-db"
+  role_type       = "jwt"
+  bound_audiences = ["https://kubernetes.default.svc.cluster.local"]
+  user_claim      = "/kubernetes.io/namespace"
+  user_claim_json_pointer = true
+  token_policies  = ["access-aaron-namespace-secrets"]
+  bound_claims_type = "glob"
+  bound_claims = {
+    "/kubernetes.io/serviceaccount/name" : "app4-db-service-*",
+    "/kubernetes.io/namespace"          : "app4-db"
+  }
+}
