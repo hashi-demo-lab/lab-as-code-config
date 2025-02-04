@@ -1,6 +1,6 @@
-resource "vault_jwt_auth_backend" "k8s_jwt" {
+resource "vault_jwt_auth_backend" "jwt" {
   description        = "Kubernetes JWT Auth Backend"
-  path               = "k8s_jwt"
+  path               = "jwt"
   oidc_discovery_url = "https://kubernetes.default.svc.cluster.local"
   bound_issuer       = "https://kubernetes.default.svc.cluster.local"
   oidc_discovery_ca_pem = base64decode(
@@ -9,7 +9,7 @@ resource "vault_jwt_auth_backend" "k8s_jwt" {
 }
 
 resource "vault_jwt_auth_backend_role" "app1_role" {
-  backend                   = vault_jwt_auth_backend.k8s_jwt.path
+  backend                   = vault_jwt_auth_backend.jwt.path
   role_name                 = "app1"
   role_type                 = "jwt"
   bound_audiences          = ["https://kubernetes.default.svc.cluster.local"]
@@ -29,7 +29,7 @@ resource "vault_jwt_auth_backend_role" "app1_role" {
 }
 
 resource "vault_jwt_auth_backend_role" "app2_role" {
-  backend         = vault_jwt_auth_backend.k8s_jwt.path
+  backend         = vault_jwt_auth_backend.jwt.path
   role_name       = "app2"
   role_type       = "jwt"
   bound_audiences = ["https://kubernetes.default.svc.cluster.local"]
@@ -46,7 +46,7 @@ resource "vault_jwt_auth_backend_role" "app2_role" {
 }
 
 resource "vault_jwt_auth_backend_role" "app3_role" {
-  backend                  = vault_jwt_auth_backend.k8s_jwt.path
+  backend                  = vault_jwt_auth_backend.jwt.path
   role_name                = "app3"
   role_type                = "jwt"
   bound_audiences         = ["https://kubernetes.default.svc.cluster.local"]
@@ -69,7 +69,7 @@ resource "vault_jwt_auth_backend_role" "app3_role" {
 }
 
 resource "vault_jwt_auth_backend_role" "app4_web_role" {
-  backend         = vault_jwt_auth_backend.k8s_jwt.path
+  backend         = vault_jwt_auth_backend.jwt.path
   role_name       = "app4-web"
   role_type       = "jwt"
   bound_audiences = ["https://kubernetes.default.svc.cluster.local"]
@@ -84,7 +84,7 @@ resource "vault_jwt_auth_backend_role" "app4_web_role" {
 }
 
 resource "vault_jwt_auth_backend_role" "app4_api_role" {
-  backend         = vault_jwt_auth_backend.k8s_jwt.path
+  backend         = vault_jwt_auth_backend.jwt.path
   role_name       = "app4-api"
   role_type       = "jwt"
   bound_audiences = ["https://kubernetes.default.svc.cluster.local"]
@@ -99,7 +99,7 @@ resource "vault_jwt_auth_backend_role" "app4_api_role" {
 }
 
 resource "vault_jwt_auth_backend_role" "app4_db_role" {
-  backend         = vault_jwt_auth_backend.k8s_jwt.path
+  backend         = vault_jwt_auth_backend.jwt.path
   role_name       = "app4-db"
   role_type       = "jwt"
   bound_audiences = ["https://kubernetes.default.svc.cluster.local"]
