@@ -1,0 +1,109 @@
+{
+  "kubernetes": {
+    "apps": [
+      {
+        "name": "app1",
+        "namespace": "app1",
+        "serviceAccounts": [
+          "app1-service-a",
+          "app1-service-b",
+          "app1-service-c",
+          "app1-service-d",
+          "app1-service-e",
+          "app1-service-f",
+          "app1-service-g",
+          "app1-service-h",
+          "app1-service-i",
+          "app1-service-j"
+        ],
+        "vaultRole": "app1",
+        "trustUnit": "Individual service accounts",
+        "description": "Each service is a unique entity, providing granular RBAC and clear auditing in Vault.",
+        "client_count": 10
+      },
+      {
+        "name": "app2",
+        "namespace": "app2",
+        "serviceAccounts": [
+          "app2-service-a",
+          "app2-service-b"
+        ],
+        "vaultRole": "app2",
+        "trustUnit": "Namespace",
+        "description": "Multiple services in the same namespace. The namespace becomes the unit of trust.",
+        "client_count": 1
+      },
+      {
+        "name": "app3",
+        "namespaces": [
+          {
+            "namespace": "app3-frontend",
+            "serviceAccount": "app3-service"
+          },
+          {
+            "namespace": "app3-backend",
+            "serviceAccount": "app3-service"
+          }
+        ],
+        "vaultRole": "app3",
+        "trustUnit": "Service Account Name Across Namespaces",
+        "description": "Uses one service account name (app3-service) across multiple namespaces.",
+        "client_count": 1
+      },
+      {
+        "name": "app4",
+        "description": "App4 spans three functional areas, each in its own namespace.",
+        "client_count": 3,
+        "functions": [
+          {
+            "name": "web",
+            "namespace": "app4-web",
+            "serviceAccounts": [
+              "app4-web-service-a",
+              "app4-web-service-b"
+            ],
+            "vaultRole": "app4-web",
+            "trustUnit": "Namespace for web"
+          },
+          {
+            "name": "api",
+            "namespace": "app4-api",
+            "serviceAccounts": [
+              "app4-api-service-a",
+              "app4-api-service-b",
+              "app4-api-service-c"
+            ],
+            "vaultRole": "app4-api",
+            "trustUnit": "Namespace for api"
+          },
+          {
+            "name": "db",
+            "namespace": "app4-db",
+            "serviceAccounts": [
+              "app4-db-service-a",
+              "app4-db-service-b"
+            ],
+            "vaultRole": "app4-db",
+            "trustUnit": "Namespace for db"
+          }
+        ]
+      },
+      {
+        "name": "app5",
+        "namespace": "app5",
+        "serviceAccounts": [
+          "default"
+        ],
+        "vaultAuthMethod": "kubernetes",
+        "vaultRole": "app5",
+        "trustUnit": "All service accounts in the 'app5' namespace (wildcard)",
+        "crdsUsed": [
+          "VaultAuth",
+          "VaultStaticSecret"
+        ],
+        "description": "Uses the Vault Secrets Operator (VSO) with the Kubernetes auth method. CRDs like VaultAuth and VaultStaticSecret fetch secrets from Vault's KV.",
+        "client_count": "multiple"
+      }
+    ]
+  }
+}
