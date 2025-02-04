@@ -14,9 +14,6 @@ resource "vault_identity_entity_alias" "alias_app4_web" {
   canonical_id   = vault_identity_entity.app4_web_entity.id
 }
 
-
-
-
 resource "vault_identity_entity" "app4_api_entity" {
   name     = "app4-api"
   policies = []
@@ -32,8 +29,6 @@ resource "vault_identity_entity_alias" "alias_app4_api" {
   mount_accessor = var.k8s_jwt_accessor
   canonical_id   = vault_identity_entity.app4_api_entity.id
 }
-
-
 
 resource "vault_identity_entity" "app4_db_entity" {
   name     = "app4-db"
