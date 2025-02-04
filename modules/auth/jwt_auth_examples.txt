@@ -1,0 +1,78 @@
+kubectl get serviceaccount --all-namespaces
+
+
+# In the app1 namespace
+app1_service_a_token=$(kubectl create token app1-service-a --namespace app1)
+app1_service_b_token=$(kubectl create token app1-service-b --namespace app1)
+
+# In the app2 namespace
+app2_service_a_token=$(kubectl create token app2-service-a --namespace app2)
+app2_service_b_token=$(kubectl create token app2-service-b --namespace app2)
+
+# In the app3 namespace
+app3_service_frontend_token=$(kubectl create token app3-service --namespace app3-frontend)
+app3_service_backend_token=$(kubectl create token app3-service --namespace app3-backend)
+
+# In the app4-web namespace
+app4_web_service_a_token=$(kubectl create token app4-web-service-a --namespace app4-web)
+app4_web_service_b_token=$(kubectl create token app4-web-service-b --namespace app4-web)
+
+# In the app4-api namespace
+app4_api_service_a_token=$(kubectl create token app4-api-service-a --namespace app4-api)
+app4_api_service_b_token=$(kubectl create token app4-api-service-b --namespace app4-api)
+app4_api_service_c_token=$(kubectl create token app4-api-service-c --namespace app4-api)
+
+# In the app4-db namespace
+app4_db_service_a_token=$(kubectl create token app4-db-service-a --namespace app4-db)
+app4_db_service_b_token=$(kubectl create token app4-db-service-b --namespace app4-db)
+
+#echo all tokens
+echo "app1_service_a_token: $app1_service_a_token"
+echo "app1_service_b_token: $app1_service_b_token"
+echo "app2_service_a_token: $app2_service_a_token"
+echo "app2_service_b_token: $app2_service_b_token"
+echo "app3_service_frontend_token: $app3_service_frontend_token"
+echo "app3_service_backend_token: $app3_service_backend_token"
+echo "app4_web_service_a_token: $app4_web_service_a_token"
+echo "app4_web_service_b_token: $app4_web_service_b_token"
+echo "app4_api_service_a_token: $app4_api_service_a_token"
+echo "app4_api_service_b_token: $app4_api_service_b_token"
+echo "app4_api_service_c_token: $app4_api_service_c_token"
+echo "app4_db_service_a_token: $app4_db_service_a_token"
+echo "app4_db_service_b_token: $app4_db_service_b_token"
+
+
+vault write auth/jwt/login role=app1 jwt=$app1_service_a_token
+vault write auth/jwt/login role=app1 jwt=$app1_service_b_token
+
+vault write auth/jwt/login role=app2 jwt=$app2_service_a_token
+vault write auth/jwt/login role=app2 jwt=$app2_service_b_token
+
+vault write auth/jwt/login role=app3 jwt=$app3_service_frontend_token
+
+vault write auth/jwt/login role=app3 jwt=$app3_service_backend_token
+
+#tf apply with the entity/aliases precreated
+vault write auth/jwt/login role=app4-web jwt=$app4_web_service_a_token
+vault write auth/jwt/login role=app4-web jwt=$app4_web_service_b_token
+
+vault write auth/jwt/login role=app4-api jwt=$app4_api_service_a_token
+vault write auth/jwt/login role=app4-api jwt=$app4_api_service_b_token
+vault write auth/jwt/login role=app4-api jwt=$app4_api_service_c_token
+
+vault write auth/jwt/login role=app4-db jwt=$app4_db_service_a_token
+vault write auth/jwt/login role=app4-db jwt=$app4_db_service_b_token
+
+#tf apply with the vso manifest
+kubectl get secret secretkv -n app5
+watch -n 2 'kubectl get secret secretkv -n app5 -o json | jq -r ".data | to_entries[] | select(.key != \"_raw\") | \"\(.key): \(.value | @base64d)\""'
+
+
+
+
+app1_vault_token=$(vault write -field=token auth/jwt/login \
+  role=app1 \
+  jwt="$app1_service_b_token")
+
+
+curl -H "Authorization: Bearer ${bearerToken}" https://vault-dc1.hashibank.com:443/v1/sys/metrics\?format\=prometheus
