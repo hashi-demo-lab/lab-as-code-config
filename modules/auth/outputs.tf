@@ -7,5 +7,5 @@ output "oidc_accessor" {
 }
 
 output "k8s_jwt_accessor" {
-    value = vault_jwt_auth_backend.k8s_jwt.accessor
+    value = vault_jwt_auth_backend.jwt.accessor
 }
