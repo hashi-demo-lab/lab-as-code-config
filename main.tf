@@ -1,8 +1,3 @@
-module "kubernetes_resources" {
-  source             = "./modules/kubernetes"
-  manifest_directory = "./manifests"
-}
-
 module "auth" {
   source = "./modules/auth"
 
@@ -32,4 +27,10 @@ module "secret_engines" {
   team_secrets_path   = var.team_secrets_path
   aarons_secrets_path = var.aarons_secrets_path
   simons_secrets_path = var.simons_secrets_path
+}
+
+module "kubernetes_resources" {
+  source             = "./modules/kubernetes"
+  depends_on         = [module.auth]
+  manifest_directory = "./manifests"
 }
