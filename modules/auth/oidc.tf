@@ -1,5 +1,5 @@
 resource "vault_jwt_auth_backend" "oidc" {
-  path               = "oidc" 
+  path               = "oidc"
   type               = "oidc"
   oidc_discovery_url = "https://gitlab.com"
   oidc_client_id     = var.oidc_client_id
@@ -17,8 +17,8 @@ resource "vault_jwt_auth_backend_role" "sea-role" {
     "https://vault-dc1.hashibank.com/ui/vault/auth/oidc/oidc/callback"
   ]
 
-  user_claim = "email"
-  groups_claim       = "groups" # Use the `groups` claim for mapping group memberships
+  user_claim   = "email"
+  groups_claim = "groups" # Use the `groups` claim for mapping group memberships
   claim_mappings = {
     "email" = "email"
     "name"  = "name"
@@ -28,7 +28,7 @@ resource "vault_jwt_auth_backend_role" "sea-role" {
   # bound_claims = {
   #   "groups_direct" = join(", ", ["hashi-demo1", "sea7861027"])
   # }
-  
+
 }
 
 resource "vault_identity_group" "sea_gitlab_group" {
@@ -60,8 +60,8 @@ resource "vault_mount" "example_kv_engine" {
 }
 
 resource "vault_kv_secret_v2" "example_secret" {
-  mount = vault_mount.example_kv_engine.path
-  name = "secrets"
+  mount     = vault_mount.example_kv_engine.path
+  name      = "secrets"
   namespace = vault_namespace.example_namespace.path
   data_json = jsonencode({
     username = "example-user"
