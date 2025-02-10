@@ -8,8 +8,8 @@ resource "vault_mount" "kv_secrets" {
 
 # Placeholder for empty secret in KV engine
 resource "vault_kv_secret_v2" "empty_secret" {
-  mount = vault_mount.kv_secrets.path
-  name  = "empty_secret"
+  mount     = vault_mount.kv_secrets.path
+  name      = "empty_secret"
   data_json = jsonencode({})
 }
 
