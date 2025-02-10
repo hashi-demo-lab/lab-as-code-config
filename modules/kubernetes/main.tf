@@ -12,10 +12,16 @@ locals {
 
 # Create Kubernetes resources for each manifest
 resource "kubernetes_manifest" "resources" {
-  for_each = { for idx, manifest in local.decoded_manifests : idx => manifest }
-  
+  for_each = {
+    for manifest in local.decoded_manifests :
+    "${manifest.kind}-${lookup(manifest.metadata, "namespace", "default")}-${manifest.metadata.name}" => manifest
+  }
+
   manifest = each.value
 }
+
+
+
 
 # Output the applied resources
 output "applied_manifests" {
