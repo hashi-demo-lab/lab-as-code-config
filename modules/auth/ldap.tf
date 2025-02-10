@@ -17,14 +17,14 @@ resource "vault_ldap_auth_backend" "ldap" {
 
 resource "vault_ldap_auth_backend_group" "group" {
   groupname = "sea"
-  policies = ["team-sea-access"]
-  backend  = vault_ldap_auth_backend.ldap.path
+  policies  = ["team-sea-access"]
+  backend   = vault_ldap_auth_backend.ldap.path
 }
 
 resource "vault_ldap_auth_backend_user" "user-simon" {
-    username = "simon"
-    policies = ["user-simon-access"]
-    backend  = vault_ldap_auth_backend.ldap.path
+  username = "simon"
+  policies = ["user-simon-access"]
+  backend  = vault_ldap_auth_backend.ldap.path
 }
 
 # # External Vault identity group for SEA, linked to LDAP group
