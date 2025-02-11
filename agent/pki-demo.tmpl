@@ -1,0 +1,5 @@
+{{ with pkiCert "intermediate-ca/issue/base" "common_name=web.cloudbrokers.com.au" "ttl=10s"}}
+{{ .CA }}
+{{ .Cert }}
+{{ .Key }}
+{{ end }}
