@@ -6,6 +6,10 @@ resource "vault_jwt_auth_backend" "jwt" {
   oidc_discovery_ca_pem = base64decode(
     yamldecode(file("~/.kube/config"))["clusters"][0]["cluster"]["certificate-authority-data"]
   )
+  tune {
+        default_lease_ttl = "1m"
+        max_lease_ttl     = "1h"
+    }
 }
 
 resource "vault_jwt_auth_backend_role" "app1_role" {
@@ -15,7 +19,7 @@ resource "vault_jwt_auth_backend_role" "app1_role" {
   bound_audiences         = ["https://kubernetes.default.svc.cluster.local"]
   user_claim              = "/kubernetes.io/serviceaccount/name"
   user_claim_json_pointer = true
-  token_policies          = ["access-aaron-namespace-secrets"]
+  token_policies          = ["access-all"]
 
   # Allows wildcards or regex in bound_claims
   bound_claims_type = "glob"
@@ -35,7 +39,7 @@ resource "vault_jwt_auth_backend_role" "app2_role" {
   bound_audiences         = ["https://kubernetes.default.svc.cluster.local"]
   user_claim              = "/kubernetes.io/namespace"
   user_claim_json_pointer = true
-  token_policies          = ["access-aaron-namespace-secrets"]
+  token_policies          = ["access-all"]
   # Allows wildcards or regex in bound_claims
   bound_claims_type = "glob"
 
@@ -54,7 +58,7 @@ resource "vault_jwt_auth_backend_role" "app3_role" {
   # Use the nested service account name as the user claim
   user_claim              = "/kubernetes.io/serviceaccount/name"
   user_claim_json_pointer = true
-  token_policies          = ["access-aaron-namespace-secrets"]
+  token_policies          = ["access-all"]
 
   # Enables wildcard matching for claims
   bound_claims_type = "glob"
@@ -75,7 +79,7 @@ resource "vault_jwt_auth_backend_role" "app4_web_role" {
   bound_audiences         = ["https://kubernetes.default.svc.cluster.local"]
   user_claim              = "/kubernetes.io/namespace"
   user_claim_json_pointer = true
-  token_policies          = ["access-aaron-namespace-secrets"]
+  token_policies          = ["access-all"]
   bound_claims_type       = "glob"
   bound_claims = {
     "/kubernetes.io/serviceaccount/name" : "app4-web-service-*",
@@ -90,7 +94,7 @@ resource "vault_jwt_auth_backend_role" "app4_api_role" {
   bound_audiences         = ["https://kubernetes.default.svc.cluster.local"]
   user_claim              = "/kubernetes.io/namespace"
   user_claim_json_pointer = true
-  token_policies          = ["access-aaron-namespace-secrets"]
+  token_policies          = ["access-all"]
   bound_claims_type       = "glob"
   bound_claims = {
     "/kubernetes.io/serviceaccount/name" : "app4-api-service-*",
@@ -105,7 +109,7 @@ resource "vault_jwt_auth_backend_role" "app4_db_role" {
   bound_audiences         = ["https://kubernetes.default.svc.cluster.local"]
   user_claim              = "/kubernetes.io/namespace"
   user_claim_json_pointer = true
-  token_policies          = ["access-aaron-namespace-secrets"]
+  token_policies          = ["access-all"]
   bound_claims_type       = "glob"
   bound_claims = {
     "/kubernetes.io/serviceaccount/name" : "app4-db-service-*",
@@ -121,9 +125,25 @@ resource "vault_jwt_auth_backend" "tfc" {
   bound_issuer       = "https://app.terraform.io"
 }
 
-resource "vault_jwt_auth_backend_role" "main" {
+resource "vault_jwt_auth_backend_role" "strategy_and_architecture_np" {
   backend        = vault_jwt_auth_backend.tfc.path
-  role_name      = "vault-demo-assumed-role"
+  role_name      = "strategy_and_architecture_np"
+  token_policies = ["access-all"]
+
+  bound_audiences   = ["vault.workload.identity"]
+  bound_claims_type = "glob"
+  bound_claims = {
+    sub = "organization:cloudbrokeraz:project:strat_arch_nonprod:workspace:*:run_phase:*"
+  }
+  
+  user_claim    = "terraform_full_workspace"
+  role_type     = "jwt"
+  token_max_ttl = "900"
+}
+
+resource "vault_jwt_auth_backend_role" "hashi-demos-apj" {
+  backend        = vault_jwt_auth_backend.tfc.path
+  role_name      = "hashi-demos-apj"
   token_policies = ["access-all"]
 
   bound_audiences   = ["vault.workload.identity"]
