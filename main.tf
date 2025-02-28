@@ -12,7 +12,7 @@ module "auth" {
 
   oidc_client_id     = var.oidc_client_id
   oidc_client_secret = var.oidc_client_secret
-  intermediate_ca = module.secret_engines.intermediate_ca_cert_pem
+  intermediate_ca    = module.secret_engines.intermediate_ca_cert_pem
 }
 
 module "identities" {
