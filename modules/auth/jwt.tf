@@ -1,4 +1,24 @@
+resource "kubernetes_cluster_role_binding_v1" "oidc_discovery_anonymous" {
+  metadata {
+    name = "oidc-discovery-anonymous"
+  }
+
+  role_ref {
+    api_group = "rbac.authorization.k8s.io"
+    kind      = "ClusterRole"
+    name      = "system:service-account-issuer-discovery"
+  }
+
+  subject {
+    kind      = "Group"
+    name      = "system:unauthenticated"
+    api_group = "rbac.authorization.k8s.io"
+  }
+}
+
+
 resource "vault_jwt_auth_backend" "jwt" {
+  depends_on = [ kubernetes_cluster_role_binding_v1.oidc_discovery_anonymous ]
   description        = "Kubernetes JWT Auth Backend"
   path               = "jwt"
   oidc_discovery_url = "https://kubernetes.default.svc.cluster.local"
