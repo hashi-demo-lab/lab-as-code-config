@@ -10,6 +10,10 @@ output "jwt_accessor" {
   value = vault_jwt_auth_backend.jwt.accessor
 }
 
+output "cert_accessor" {
+  value = vault_auth_backend.cert.accessor
+}
+
 output "kubernetes_accessor" {
   value = vault_auth_backend.kubernetes.accessor
 }
