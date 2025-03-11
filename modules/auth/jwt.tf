@@ -18,7 +18,7 @@ resource "kubernetes_cluster_role_binding_v1" "oidc_discovery_anonymous" {
 
 
 resource "vault_jwt_auth_backend" "jwt" {
-  depends_on = [ kubernetes_cluster_role_binding_v1.oidc_discovery_anonymous ]
+  depends_on         = [kubernetes_cluster_role_binding_v1.oidc_discovery_anonymous]
   description        = "Kubernetes JWT Auth Backend"
   path               = "jwt"
   oidc_discovery_url = "https://kubernetes.default.svc.cluster.local"
@@ -27,10 +27,10 @@ resource "vault_jwt_auth_backend" "jwt" {
     yamldecode(file("~/.kube/config"))["clusters"][0]["cluster"]["certificate-authority-data"]
   )
   tune {
-        default_lease_ttl = "1m"
-        max_lease_ttl     = "1h"
-        token_type        = "default-service"
-    }
+    default_lease_ttl = "1m"
+    max_lease_ttl     = "1h"
+    token_type        = "default-service"
+  }
 }
 
 resource "vault_jwt_auth_backend_role" "app1_role" {
@@ -156,7 +156,7 @@ resource "vault_jwt_auth_backend_role" "strategy_and_architecture_np" {
   bound_claims = {
     sub = "organization:cloudbrokeraz:project:strat_arch_nonprod:workspace:*:run_phase:*"
   }
-  
+
   user_claim    = "terraform_full_workspace"
   role_type     = "jwt"
   token_max_ttl = "900"
@@ -172,7 +172,7 @@ resource "vault_jwt_auth_backend_role" "hashi-demos-apj" {
   bound_claims = {
     sub = "organization:hashi-demos-apj:project:*:workspace:*:run_phase:*"
   }
-  
+
   user_claim    = "terraform_full_workspace"
   role_type     = "jwt"
   token_max_ttl = "900"
