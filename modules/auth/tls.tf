@@ -3,11 +3,10 @@ resource "vault_auth_backend" "cert" {
   path = "cert"
 }
 
-resource "vault_cert_auth_backend_role" "cert" {
+resource "vault_cert_auth_backend_role" "client-cert-auth" {
   backend        = vault_auth_backend.cert.path
-  name           = "foo"
+  name           = "client-cert-auth"
+  display_name = "Client Cert Auth Role"
   certificate    = var.intermediate_ca
-  token_ttl      = 300
-  token_max_ttl  = 600
-  token_policies = ["foo"]
+  allowed_common_names = [ "aarons-macbook" ]
 }
