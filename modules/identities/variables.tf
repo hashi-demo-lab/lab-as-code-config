@@ -1,3 +1,18 @@
+variable "aaron_oidc_alias" {
+  description = "OIDC Alias for Aaron"
+  type        = string
+}
+
+variable "simon_oidc_alias" {
+  description = "OIDC Alias for Simon"
+  type        = string
+}
+
+variable "tony_oidc_alias" {
+  description = "OIDC Alias for Tony"
+  type        = string
+}
+
 variable "ldap_accessor" {
   description = "LDAP Auth Backend Accessor"
   type        = string
@@ -10,6 +25,16 @@ variable "oidc_accessor" {
 
 variable "jwt_accessor" {
   description = "K8s JWT Auth Backend Accessor"
+  type        = string
+}
+
+variable "userpass_accessor" {
+  description = "Userpass Auth Backend Accessor"
+  type        = string
+}
+
+variable "approle_accessor" {
+  description = "Approle Auth Backend Accessor"
   type        = string
 }
 
