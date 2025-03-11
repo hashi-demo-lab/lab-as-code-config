@@ -26,6 +26,8 @@ module "identities" {
   ldap_accessor       = module.auth.ldap_accessor
   oidc_accessor       = module.auth.oidc_accessor
   jwt_accessor        = module.auth.jwt_accessor
+  userpass_accessor   = module.auth.userpass_accessor
+  approle_accessor    = module.auth.approle_accessor
   kubernetes_accessor = module.auth.kubernetes_accessor
   tfc_accessor        = module.auth.tfc_accessor
   cert_accessor       = module.auth.cert_accessor
