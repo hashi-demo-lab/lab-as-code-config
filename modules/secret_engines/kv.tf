@@ -69,3 +69,19 @@ resource "vault_kv_secret_v2" "development_env_secrets" {
     }
   }
 }
+
+# Create a KV secrets engine
+resource "vault_mount" "hostnaming_service" {
+  path        = "hostnaming"
+  type        = "kv"
+  options     = { version = "2" }
+  description = "providing hostnaming as a service "
+}
+
+resource "vault_kv_secret_backend_v2" "hostnaming_service" {
+  mount        = vault_mount.hostnaming_service.path
+  max_versions = 5
+  cas_required = true
+  # Optionally, set delete_version_after if needed:
+  # delete_version_after = 12600
+}
