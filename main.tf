@@ -1,3 +1,7 @@
+data "local_file" "root_ca_cert" {
+  filename = "${path.root}/../certificates/lab-root-ca.crt"
+}
+
 module "secret_engines" {
   source = "./modules/secret_engines"
 
@@ -12,7 +16,7 @@ module "auth" {
 
   oidc_client_id     = var.oidc_client_id
   oidc_client_secret = var.oidc_client_secret
-  intermediate_ca    = module.secret_engines.intermediate_ca_cert_pem
+  intermediate_ca    = data.local_file.root_ca_cert.content
 }
 
 module "identities" {
@@ -24,6 +28,7 @@ module "identities" {
   jwt_accessor        = module.auth.jwt_accessor
   kubernetes_accessor = module.auth.kubernetes_accessor
   tfc_accessor        = module.auth.tfc_accessor
+  cert_accessor       = module.auth.cert_accessor
 }
 
 module "policies" {
