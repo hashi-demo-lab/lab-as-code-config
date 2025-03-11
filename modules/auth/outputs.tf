@@ -14,6 +14,15 @@ output "cert_accessor" {
   value = vault_auth_backend.cert.accessor
 }
 
+output "userpass_accessor" {
+  value = vault_auth_backend.userpass.accessor
+}
+
+output "approle_accessor" {
+  value = vault_auth_backend.approle.accessor
+
+}
+
 output "kubernetes_accessor" {
   value = vault_auth_backend.kubernetes.accessor
 }
