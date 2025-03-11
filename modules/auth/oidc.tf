@@ -4,7 +4,6 @@ resource "vault_jwt_auth_backend" "oidc" {
   oidc_discovery_url = "https://gitlab.com"
   oidc_client_id     = var.oidc_client_id
   oidc_client_secret = var.oidc_client_secret
-  default_role       = "sea-role"
 }
 
 resource "vault_jwt_auth_backend_role" "sea-role" {
@@ -14,7 +13,7 @@ resource "vault_jwt_auth_backend_role" "sea-role" {
 
   allowed_redirect_uris = [
     "http://localhost:8250/oidc/callback",
-    "https://vault-dc1.hashibank.com/ui/vault/auth/oidc/oidc/callback"
+    "https://vault.hashibank.com/ui/vault/auth/oidc/oidc/callback"
   ]
 
   user_claim   = "email"
@@ -25,10 +24,10 @@ resource "vault_jwt_auth_backend_role" "sea-role" {
   }
 
   bound_claims_type = "glob" # Apply glob matching for claim values
-  # bound_claims = {
-  #   "groups_direct" = join(", ", ["hashi-demo1", "sea7861027"])
-  # }
-
+  bound_claims = {
+  "groups_direct" = "sea78610272asf,hashi-demo1,asasas124"
+  "website" = "https://cloudbrokers.com,https://cloudbrokers.com.au,https://cloudbrokers.com.sg"
+  }
 }
 
 resource "vault_identity_group" "sea_gitlab_group" {
