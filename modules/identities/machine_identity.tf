@@ -63,7 +63,7 @@ resource "vault_identity_entity_alias" "alias_app4_db" {
 }
 
 resource "vault_identity_entity" "pki-drift-detection-demo" {
-  name     = "tfc-workspace-pki-drift-detection-demo"
+  name = "tfc-workspace-pki-drift-detection-demo"
   metadata = {
   }
 }
