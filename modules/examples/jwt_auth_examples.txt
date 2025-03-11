@@ -1,0 +1,97 @@
+#!/bin/bash
+# JWT Auth Demo Cheat Sheet
+# This script demonstrates token generation, Vault login using JWT, 
+# and secret verification in the Kubernetes cluster.
+
+# -------------------------------
+# 1. Generate Tokens with kubectl
+# -------------------------------
+
+# app1 Namespace
+app1_service_a_token=$(kubectl create token app1-service-a --namespace app1)
+app1_service_b_token=$(kubectl create token app1-service-b --namespace app1)
+
+# app2 Namespace
+app2_service_a_token=$(kubectl create token app2-service-a --namespace app2)
+app2_service_b_token=$(kubectl create token app2-service-b --namespace app2)
+
+# app3 Namespace
+app3_service_frontend_token=$(kubectl create token app3-service --namespace app3-frontend)
+app3_service_backend_token=$(kubectl create token app3-service --namespace app3-backend)
+
+# app4-web Namespace
+app4_web_service_a_token=$(kubectl create token app4-web-service-a --namespace app4-web)
+app4_web_service_b_token=$(kubectl create token app4-web-service-b --namespace app4-web)
+
+# app4-api Namespace
+app4_api_service_a_token=$(kubectl create token app4-api-service-a --namespace app4-api)
+app4_api_service_b_token=$(kubectl create token app4-api-service-b --namespace app4-api)
+app4_api_service_c_token=$(kubectl create token app4-api-service-c --namespace app4-api)
+
+# app4-db Namespace
+app4_db_service_a_token=$(kubectl create token app4-db-service-a --namespace app4-db)
+app4_db_service_b_token=$(kubectl create token app4-db-service-b --namespace app4-db)
+
+# -------------------------------
+# 2. Display Tokens for Verification
+# -------------------------------
+echo "app1_service_a_token: $app1_service_a_token"
+echo "app1_service_b_token: $app1_service_b_token"
+echo "app2_service_a_token: $app2_service_a_token"
+echo "app2_service_b_token: $app2_service_b_token"
+echo "app3_service_frontend_token: $app3_service_frontend_token"
+echo "app3_service_backend_token: $app3_service_backend_token"
+echo "app4_web_service_a_token: $app4_web_service_a_token"
+echo "app4_web_service_b_token: $app4_web_service_b_token"
+echo "app4_api_service_a_token: $app4_api_service_a_token"
+echo "app4_api_service_b_token: $app4_api_service_b_token"
+echo "app4_api_service_c_token: $app4_api_service_c_token"
+echo "app4_db_service_a_token: $app4_db_service_a_token"
+echo "app4_db_service_b_token: $app4_db_service_b_token"
+
+# -------------------------------
+# 3. Login to Vault Using JWT Tokens
+# -------------------------------
+
+# app1 Login
+vault write auth/jwt/login role=app1 jwt=$app1_service_a_token
+vault write auth/jwt/login role=app1 jwt=$app1_service_b_token
+
+# app2 Login
+vault write auth/jwt/login role=app2 jwt=$app2_service_a_token
+vault write auth/jwt/login role=app2 jwt=$app2_service_b_token
+
+# app3 Login
+vault write auth/jwt/login role=app3 jwt=$app3_service_frontend_token
+vault write auth/jwt/login role=app3 jwt=$app3_service_backend_token
+
+# app4-web Login
+# Note: Ensure Terraform applies with entity/aliases are pre-created.
+vault write auth/jwt/login role=app4-web jwt=$app4_web_service_a_token
+vault write auth/jwt/login role=app4-web jwt=$app4_web_service_b_token
+
+# app4-api Login
+vault write auth/jwt/login role=app4-api jwt=$app4_api_service_a_token
+vault write auth/jwt/login role=app4-api jwt=$app4_api_service_b_token
+vault write auth/jwt/login role=app4-api jwt=$app4_api_service_c_token
+
+# app4-db Login
+vault write auth/jwt/login role=app4-db jwt=$app4_db_service_a_token
+vault write auth/jwt/login role=app4-db jwt=$app4_db_service_b_token
+
+# -------------------------------
+# 4. Verify the Secret in the app5 Namespace
+# -------------------------------
+
+# Retrieve the secret
+kubectl get secret secretkv -n app5
+
+# Watch secret changes every 2 seconds
+watch -n 2 'kubectl get secret secretkv -n app5 -o json | jq -r ".data | to_entries[] | select(.key != \"_raw\") | \"\(.key): \(.value | @base64d)\""'
+
+# -------------------------------
+# Action Points
+# -------------------------------
+# - Confirm tokens are created in the correct namespaces.
+# - Verify that Vault roles align with your intended authentication.
+# - Monitor secret updates in the app5 namespace in real time.
