@@ -13,6 +13,11 @@ variable "jwt_accessor" {
   type        = string
 }
 
+variable "cert_accessor" {
+  description = "Cert Auth Backend Accessor"
+  type        = string
+}
+
 variable "kubernetes_accessor" {
   description = "K8s Auth Backend Accessor"
   type        = string
