@@ -29,6 +29,7 @@ resource "vault_jwt_auth_backend" "jwt" {
   tune {
         default_lease_ttl = "1m"
         max_lease_ttl     = "1h"
+        token_type        = "default-service"
     }
 }
 
