@@ -1,0 +1,27 @@
+## 1. CLI Commands
+vault write intermediate-ca/issue/base common_name=mysupercoolsite.hashibank.gov.au
+vault write intermediate-ca/issue/base common_name=mysupercoolsite.hashibank.com
+vault write intermediate-ca/issue/base common_name=mysupercoolsite.hashibank.com ttl=300
+vault write intermediate-ca/issue/base common_name=mysupercoolsite.hashibank.com ttl=300 ip_sans="127.0.0.1"
+
+## 2. API Command
+@vault_host=vault-dc1.hashibank.com:443
+@authToken=<authToken>
+###
+## Get PKI Certificate
+
+POST https://{{vault_host}}/v1/intermediate-ca/issue/base
+X-Vault-Token: {{authToken}}
+Accept: application/json
+Content-Type: application/json
+
+{"common_name": "example.cloudbrokers.com.au"}
+
+## 3. Terraform Enterprise Drift Detection
+
+## 4. Vault Agent
+vault agent -config=agent-config.hcl   
+
+## 5. Kubernetes
+kubectl get ingress --all-namespaces
+watch -n 1 'kubectl get events -n hashibank --field-selector involvedObject.kind=Certificate,involvedObject.name=demo-hashibank-com-v2'
