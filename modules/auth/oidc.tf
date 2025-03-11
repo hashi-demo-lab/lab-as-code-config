@@ -25,8 +25,8 @@ resource "vault_jwt_auth_backend_role" "sea-role" {
 
   bound_claims_type = "glob" # Apply glob matching for claim values
   bound_claims = {
-  "groups_direct" = "sea78610272asf,hashi-demo1,asasas124"
-  "website" = "https://cloudbrokers.com,https://cloudbrokers.com.au,https://cloudbrokers.com.sg"
+    "groups_direct" = "sea78610272asf,hashi-demo1,asasas124"
+    "website"       = "https://cloudbrokers.com,https://cloudbrokers.com.au,https://cloudbrokers.com.sg"
   }
 }
 
