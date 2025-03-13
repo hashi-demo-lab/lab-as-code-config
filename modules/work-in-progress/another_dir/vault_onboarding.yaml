@@ -1,0 +1,10 @@
+jwt_auth:
+  issuer: "https://auth.example.com"
+  audience: "vault"
+  allowed_clusters:
+    - cluster1.example.com
+    - cluster2.example.com
+    - clusterX.example.com
+vault_metadata:
+  created_by: "developer@example.com"
+  environment: "production"
