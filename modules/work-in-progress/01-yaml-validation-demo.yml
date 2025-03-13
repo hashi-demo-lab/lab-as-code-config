@@ -1,0 +1,54 @@
+# Demo Examples 
+
+example1:
+  description: "Reads and decodes the YAML file from a fixed location. Uses a null_resource with a precondition to validate each allowed cluster."
+  pros:
+    - "Straightforward implementation."
+    - "Stops the Terraform run if the YAML does not pass validation."
+  cons:
+    - "Introduces a dummy resource solely for validation."
+    - "The null_resource appears in the state file, even though it performs no operational work."
+
+example2:
+  description: "Passes the YAML content directly as a string input variable (using a command-line or tfvars file)." i.e. terraform plan -var "vault_onboarding_yaml=$(cat another_dir/vault_onboarding.yaml)"
+  pros:
+    - "All validation happens in the input variable."
+    - "Provides clear error feedback directly from the validation block."
+  cons:
+    - "Requires manually reading the file and passing its content via shell command or a tfvars file."
+    - "The YAML is injected as a string, which can be less maintainable for larger files."
+    - "May face cross-platform issues with shell command substitution."
+    - Difficult to handle for multiple yaml files. Really only works for one yaml file.
+
+example3:
+  description: "Uses Terraform 1.9’s enhanced input variable validations to read and validate the file content by passing only a file path as a variable."
+  pros:
+    - "Cleaner input: only a file path is passed, keeping defaults constant."
+    - "Avoids creating extra resources solely for validation."
+    - "Leverages built-in cross-object validations in Terraform 1.9+."
+  cons:
+    - "The file may be read multiple times in the validation condition (usually acceptable for small files)."
+    - "Requires Terraform 1.9 or later."
+
+
+
+
+
+
+
+# variable "create_cluster" {
+#   description = "Whether to create a new cluster."
+#   type        = bool
+#   default     = false
+# }
+
+# variable "cluster_endpoint" {
+#   description = "Endpoint of the existing cluster to use."
+#   type        = string
+#   default     = ""
+
+#   validation {
+#     condition     = var.create_cluster == false ? length(var.cluster_endpoint) > 0 : true
+#     error_message = "You must specify a value for cluster_endpoint if create_cluster is false."
+#   }
+# }
