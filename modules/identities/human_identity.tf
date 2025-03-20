@@ -55,7 +55,7 @@ resource "vault_identity_entity" "tony" {
 
 resource "vault_identity_entity" "simon" {
   name     = "simon"
-  policies = ["simon-access"]
+  policies = ["simon-access","access-all"]
   metadata = {
     user = "simon"
     team = "blue"
@@ -65,6 +65,13 @@ resource "vault_identity_entity" "simon" {
 resource "vault_identity_entity_alias" "simon_ldap_alias" {
   name           = "simon"
   mount_accessor = var.ldap_accessor
+  canonical_id   = vault_identity_entity.simon.id
+}
+
+resource "vault_identity_entity_alias" "simon_userpass_alias" {
+  #count          = var.userpass_accessor != "" ? 1 : 0
+  name           = "simon"
+  mount_accessor = var.userpass_accessor
   canonical_id   = vault_identity_entity.simon.id
 }
 
