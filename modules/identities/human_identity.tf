@@ -55,7 +55,7 @@ resource "vault_identity_entity" "tony" {
 
 resource "vault_identity_entity" "simon" {
   name     = "simon"
-  policies = []
+  policies = ["simon-access"]
   metadata = {
     user = "simon"
     team = "blue"
