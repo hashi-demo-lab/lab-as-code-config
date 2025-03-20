@@ -8,7 +8,7 @@ resource "vault_identity_entity" "aaron" {
 }
 
 resource "vault_generic_endpoint" "aaron" {
-  count                = var.userpass_accessor != "" ? 1 : 0
+  #count                = var.userpass_accessor != "" ? 1 : 0
   path                 = "auth/userpass/users/aaron"
   ignore_absent_fields = true
   data_json            = <<EOT
@@ -19,7 +19,7 @@ EOT
 }
 
 resource "vault_identity_entity_alias" "aaron_userpass_alias" {
-  count          = var.userpass_accessor != "" ? 1 : 0
+  #count          = var.userpass_accessor != "" ? 1 : 0
   name           = "aaron"
   mount_accessor = var.userpass_accessor
   canonical_id   = vault_identity_entity.aaron.id
@@ -31,11 +31,11 @@ resource "vault_identity_entity_alias" "aaron_ldap_alias" {
   canonical_id   = vault_identity_entity.aaron.id
 }
 
-resource "vault_identity_entity_alias" "aaron_oidc_alias" {
-  name           = var.aaron_oidc_alias
-  mount_accessor = var.oidc_accessor
-  canonical_id   = vault_identity_entity.aaron.id
-}
+# resource "vault_identity_entity_alias" "aaron_oidc_alias" {
+#   name           = var.aaron_oidc_alias
+#   mount_accessor = var.oidc_accessor
+#   canonical_id   = vault_identity_entity.aaron.id
+# }
 
 # resource for aaron usingn cert_accessor
 resource "vault_identity_entity_alias" "aaron_cert_alias" {
@@ -68,8 +68,19 @@ resource "vault_identity_entity_alias" "simon_ldap_alias" {
   canonical_id   = vault_identity_entity.simon.id
 }
 
-resource "vault_identity_entity_alias" "simon_oidc_alias" {
-  name           = var.simon_oidc_alias
-  mount_accessor = var.oidc_accessor
-  canonical_id   = vault_identity_entity.simon.id
+resource "vault_generic_endpoint" "simon" {
+  #count                = var.userpass_accessor != "" ? 1 : 0
+  path                 = "auth/userpass/users/simon"
+  ignore_absent_fields = true
+  data_json            = <<EOT
+  {
+    "password": "changeme"
+  }
+EOT
 }
+
+# resource "vault_identity_entity_alias" "simon_oidc_alias" {
+#   name           = var.simon_oidc_alias
+#   mount_accessor = var.oidc_accessor
+#   canonical_id   = vault_identity_entity.simon.id
+# }
