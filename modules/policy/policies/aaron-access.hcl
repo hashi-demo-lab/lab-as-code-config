@@ -15,6 +15,6 @@ path "demo-kv/data/users/aaron/*" {
 
 # Allow Aaron to list metadata for his secrets
 path "demo-kv/metadata/users/aaron/*" {
-  capabilities = ["list"]]
+  capabilities = ["list"]
   
 }
