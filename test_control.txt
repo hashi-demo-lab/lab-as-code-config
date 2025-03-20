@@ -1,0 +1,3 @@
+vault login -method=userpass username="aaron" password="changeme"
+
+vault kv get -mount="demo-kv" "users/aaron/secrets"

@@ -1,6 +1,6 @@
 resource "vault_identity_entity" "aaron" {
   name     = "aaron"
-  policies = ["user-aaron-access", "access-all"]
+  policies = ["aaron-access" ]#"access-all"]
   metadata = {
     user = "aaron"
     team = "blue"
