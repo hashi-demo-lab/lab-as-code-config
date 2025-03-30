@@ -1,24 +1,17 @@
 resource "vault_mount" "root" {
   path                      = "root-ca"
   type                      = "pki"
-  description               = "Root CA"
+  description               = "Imported Long-lived Root CA"
   default_lease_ttl_seconds = 31536000
   max_lease_ttl_seconds     = 31536000
 }
 
-resource "vault_pki_secret_backend_root_cert" "root" {
-  backend            = vault_mount.root.path
-  type               = "internal"
-  common_name        = "root-ca"
-  format             = "pem"
-  private_key_format = "der"
-  key_type           = "rsa"
-  key_bits           = 4096
-  ou                 = "Solutions Engineering & Architecture "
-  organization       = "hashi-demo-lab"
-  country            = "AU"
-  locality           = "Sydney"
-  province           = "NSW"
+resource "vault_pki_secret_backend_config_ca" "import_root" {
+  backend = vault_mount.root.path
+  pem_bundle = <<-EOF
+${var.root_ca_key}
+${var.root_ca}
+EOF
 }
 
 resource "vault_pki_secret_backend_config_cluster" "this" {
@@ -63,11 +56,6 @@ resource "vault_pki_secret_backend_role" "base_role" {
   allowed_domains  = ["cloudbrokers.com.au", "hashibank.com"]
   allow_subdomains = true
   max_ttl          = 1800
-  # organization     = ["hashi-demo-lab"]
-  # ou               = ["Solutions Engineering and Architecture"]
-  # country          = ["Australia"]
-  # locality         = ["Sydney"]
-  # province         = ["NSW"]
   allow_ip_sans = false
 }
 
@@ -93,4 +81,46 @@ resource "vault_pki_secret_backend_role" "prod_role" {
   allowed_domains  = ["prod.example.com"]
   allow_subdomains = true
   max_ttl          = 259200
+}
+
+resource "vault_mount" "pki_codesigning" {
+  path        = "pki-codesign"
+  type        = "pki"
+  description = "PKI for Code Signing"
+}
+
+resource "vault_pki_secret_backend_intermediate_cert_request" "codesign_csr" {
+  backend      = vault_mount.pki_codesigning.path
+  type         = "internal"
+  common_name  = "Vault Code Signing CA"
+  organization = "hashi-demo-lab"
+  country      = "AU"
+  locality     = "Sydney"
+  province     = "NSW"
+}
+
+resource "vault_pki_secret_backend_root_sign_intermediate" "codesign_signed" {
+  backend     = vault_mount.intermediate.path
+  csr         = vault_pki_secret_backend_intermediate_cert_request.codesign_csr.csr
+  common_name = "Vault Code Signing CA"
+}
+
+resource "vault_pki_secret_backend_intermediate_set_signed" "codesign" {
+  backend     = vault_mount.pki_codesigning.path
+  certificate = vault_pki_secret_backend_root_sign_intermediate.codesign_signed.certificate
+}
+
+resource "vault_pki_secret_backend_role" "codesign_role" {
+  backend          = vault_mount.pki_codesigning.path
+  name             = "github-actions-codesign"
+  allowed_domains  = ["code-signing.local"]
+  allow_subdomains = true
+  allow_any_name   = true
+  key_type         = "ec"
+  key_bits         = 521
+  ttl              = "1h"
+  max_ttl          = "24h"
+  generate_lease   = true
+  enforce_hostnames = false
+  require_cn       = true
 }
