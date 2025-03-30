@@ -8,7 +8,6 @@ resource "vault_identity_entity" "aaron" {
 }
 
 resource "vault_generic_endpoint" "aaron" {
-  #count                = var.userpass_accessor != "" ? 1 : 0
   path                 = "auth/userpass/users/aaron"
   ignore_absent_fields = true
   data_json            = <<EOT
@@ -76,7 +75,6 @@ resource "vault_identity_entity_alias" "simon_userpass_alias" {
 }
 
 resource "vault_generic_endpoint" "simon" {
-  #count                = var.userpass_accessor != "" ? 1 : 0
   path                 = "auth/userpass/users/simon"
   ignore_absent_fields = true
   data_json            = <<EOT
