@@ -17,3 +17,13 @@ variable "aarons_secrets_path" {
   type        = string
   description = "Path for storing Aaron's personal secrets within the KV engine."
 }
+
+variable "root_ca" {
+  description = "The root CA certificate"
+  type        = string
+}
+
+variable "root_ca_key" {
+  description = "The root CA private key"
+  type        = string
+}
