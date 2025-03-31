@@ -3,3 +3,9 @@ variable "manifest_directory" {
   type        = string
   default     = "./manifests"
 }
+
+variable "enable_manifests" {
+  description = "Map of manifest file names to boolean indicating whether they should be deployed"
+  type        = map(bool)
+  default     = {}
+}

@@ -2,6 +2,10 @@ data "local_file" "root_ca_cert" {
   filename = "${path.root}/../certificates/lab-root-ca.crt"
 }
 
+data "local_file" "root_ca_key" {
+  filename = "${path.root}/../certificates/lab-root-ca.key"
+}
+
 module "secret_engines" {
   source = "./modules/secret_engines"
 
@@ -45,4 +49,5 @@ module "kubernetes_resources" {
   source             = "./modules/kubernetes"
   depends_on         = [module.auth]
   manifest_directory = "./manifests"
+  enable_manifests   = var.kubernetes_manifests_enabled
 }

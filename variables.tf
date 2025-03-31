@@ -51,3 +51,10 @@ variable "users" {
   description = "A map of users to create in Vault."
 }
 
+variable "kubernetes_manifests_enabled" {
+  description = "Map of Kubernetes manifest files to boolean indicating whether they should be deployed"
+  type        = map(bool)
+  default     = {}
+  # Example: { "serviceaccounts.yaml" = true, "roles.yaml" = false }
+}
+

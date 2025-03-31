@@ -14,7 +14,7 @@ variable "kube_config_path" {
   default     = "~/.kube/config"
 }
 
-variable "intermediate_ca" {
+variable "root_ca" {
   description = "The intermediate CA certificate"
   type        = string
 }
