@@ -4,6 +4,18 @@ resource "vault_jwt_auth_backend" "oidc" {
   oidc_discovery_url = "https://gitlab.com"
   oidc_client_id     = var.oidc_client_id
   oidc_client_secret = var.oidc_client_secret
+  default_role = "sea-role"
+  tune {
+    default_lease_ttl           = "1h"
+    max_lease_ttl               = "24h"
+    allowed_response_headers    = []
+    audit_non_hmac_request_keys = []
+    audit_non_hmac_response_keys = []
+    listing_visibility          = "unauth"
+    token_type                  = "default-service"
+    passthrough_request_headers = []
+  }
+  description = "OIDC auth backend for GitLab"
 }
 
 resource "vault_jwt_auth_backend_role" "sea-role" {
