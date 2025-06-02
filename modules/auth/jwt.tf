@@ -16,16 +16,18 @@ resource "kubernetes_cluster_role_binding_v1" "oidc_discovery_anonymous" {
   }
 }
 
-
 resource "vault_jwt_auth_backend" "jwt" {
   depends_on         = [kubernetes_cluster_role_binding_v1.oidc_discovery_anonymous]
   description        = "Kubernetes JWT Auth Backend"
   path               = "jwt"
-  oidc_discovery_url = "https://kubernetes.default.svc.cluster.local"
-  bound_issuer       = "https://kubernetes.default.svc.cluster.local"
-  oidc_discovery_ca_pem = base64decode(
-    yamldecode(file("~/.kube/config"))["clusters"][0]["cluster"]["certificate-authority-data"]
-  )
+  oidc_discovery_url      = "https://kubernetes.default.svc.cluster.local"
+  bound_issuer            = "https://kubernetes.default.svc.cluster.local"
+  oidc_discovery_ca_pem   = local.docker_desktop_ca_cert
+  # oidc_discovery_ca_pem = base64decode(
+  #   yamldecode(file("~/.kube/config"))["clusters"][0]["cluster"]["certificate-authority-data"]
+  # )
+  
+
   tune {
     default_lease_ttl = "1m"
     max_lease_ttl     = "1h"
