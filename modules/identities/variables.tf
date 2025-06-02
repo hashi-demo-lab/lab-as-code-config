@@ -1,19 +1,20 @@
 variable "aaron_oidc_alias" {
   description = "OIDC Alias for Aaron"
   type        = string
-  default     = ""
+  default = ""
 }
 
 variable "simon_oidc_alias" {
   description = "OIDC Alias for Simon"
   type        = string
-  default     = ""
+  default = "value"
+
 }
 
 variable "tony_oidc_alias" {
   description = "OIDC Alias for Tony"
   type        = string
-  default     = ""
+  default = "value"
 }
 
 variable "ldap_accessor" {
@@ -29,6 +30,7 @@ variable "oidc_accessor" {
 variable "jwt_accessor" {
   description = "K8s JWT Auth Backend Accessor"
   type        = string
+  default = ""
 }
 
 variable "userpass_accessor" {
@@ -54,4 +56,5 @@ variable "kubernetes_accessor" {
 variable "tfc_accessor" {
   description = "TFC JWT Auth Backend Accessor"
   type        = string
+  default = ""
 }

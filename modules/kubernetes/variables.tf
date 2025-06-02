@@ -9,3 +9,9 @@ variable "enable_manifests" {
   type        = map(bool)
   default     = {}
 }
+
+variable "kubernetes_manifests_enabled" {
+  description = "Enable or disable applying Kubernetes manifests"
+  type        = bool
+  default     = true
+}
