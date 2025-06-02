@@ -1,6 +1,6 @@
 resource "vault_identity_entity" "aaron" {
   name     = "aaron"
-  policies = ["aaron-access" ]#"access-all"]
+  policies = ["aaron-access", "update-oidc", "enforce-max-ttl"]
   metadata = {
     user = "aaron"
     team = "blue"
@@ -30,11 +30,11 @@ resource "vault_identity_entity_alias" "aaron_ldap_alias" {
   canonical_id   = vault_identity_entity.aaron.id
 }
 
-# resource "vault_identity_entity_alias" "aaron_oidc_alias" {
-#   name           = var.aaron_oidc_alias
-#   mount_accessor = var.oidc_accessor
-#   canonical_id   = vault_identity_entity.aaron.id
-# }
+resource "vault_identity_entity_alias" "aaron_oidc_alias" {
+  name           = var.aaron_oidc_alias
+  mount_accessor = var.oidc_accessor
+  canonical_id   = vault_identity_entity.aaron.id
+}
 
 # resource for aaron usingn cert_accessor
 resource "vault_identity_entity_alias" "aaron_cert_alias" {
