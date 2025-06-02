@@ -7,14 +7,14 @@ path "demo-kv/data/teams/sea/*" {
 path "demo-kv/data/teams/sea/*" {
   capabilities = ["create", "read", "update", "delete", "list"]
 
-  control_group = {
-    factor "admin_approval" {
-      identity {
-        group_names = ["ldap-administrators-group"]
-        approvals = 1
-      }
-    }
-  }
+  # control_group = {
+  #   factor "admin_approval" {
+  #     identity {
+  #       group_names = ["ldap-administrators-group"]
+  #       approvals = 1
+  #     }
+  #   }
+  # }
 }
 
 # Allow SEA team to list metadata for their shared secrets
