@@ -110,17 +110,17 @@ resource "vault_pki_secret_backend_intermediate_set_signed" "codesign" {
   certificate = vault_pki_secret_backend_root_sign_intermediate.codesign_signed.certificate
 }
 
-resource "vault_pki_secret_backend_role" "codesign_role" {
-  backend          = vault_mount.pki_codesigning.path
-  name             = "github-actions-codesign"
-  allowed_domains  = ["code-signing.local"]
-  allow_subdomains = true
-  allow_any_name   = true
-  key_type         = "ec"
-  key_bits         = 521
-  ttl              = "1h"
-  max_ttl          = "24h"
-  generate_lease   = true
-  enforce_hostnames = false
-  require_cn       = true
-}
+# resource "vault_pki_secret_backend_role" "codesign_role" {
+#   backend          = vault_mount.pki_codesigning.path
+#   name             = "github-actions-codesign"
+#   allowed_domains  = ["code-signing.local"]
+#   allow_subdomains = true
+#   allow_any_name   = true
+#   key_type         = "ec"
+#   key_bits         = 521
+#   ttl              = "1h"
+#   max_ttl          = "24h"
+#   generate_lease   = true
+#   enforce_hostnames = false
+#   require_cn       = true
+# }
