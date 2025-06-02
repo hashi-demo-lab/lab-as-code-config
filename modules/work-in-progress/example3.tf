@@ -1,3 +1,10 @@
+locals {
+  team_configs = {
+    for p in var.vault_onboarding_yaml_paths :
+    p => yamldecode(file("${path.module}/${p}"))
+  }
+}
+
 variable "vault_onboarding_yaml_paths" {
   type        = list(string)
   description = "List of relative paths to team YAML files."
@@ -44,13 +51,6 @@ variable "vault_onboarding_yaml_paths" {
       ]),
       join(", ", ["cluster1.example.com", "cluster2.example.com", "cluster3.example.com", "cluster4.example.com"])
     )
-  }
-}
-
-locals {
-  team_configs = {
-    for p in var.vault_onboarding_yaml_paths :
-    p => yamldecode(file("${path.module}/${p}"))
   }
 }
 
