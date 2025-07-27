@@ -1,20 +1,16 @@
 variable "aaron_oidc_alias" {
   description = "OIDC Alias for Aaron"
   type        = string
-  default = ""
 }
 
 variable "simon_oidc_alias" {
   description = "OIDC Alias for Simon"
   type        = string
-  default = "value"
-
 }
 
 variable "tony_oidc_alias" {
   description = "OIDC Alias for Tony"
   type        = string
-  default = "value"
 }
 
 variable "ldap_accessor" {
