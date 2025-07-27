@@ -16,8 +16,20 @@ EOF
 
 resource "vault_pki_secret_backend_config_cluster" "this" {
   backend  = vault_mount.root.path
-  path     = "http://127.0.0.1:8200/v1/root-ca"
-  aia_path = "http://127.0.0.1:8200/v1/root-ca"
+  path     = "https://vault.primary-vault.svc.cluster.local:8200/v1/root-ca"
+  aia_path = "https://vault.primary-vault.svc.cluster.local:8200/v1/root-ca"
+}
+
+# Configure URLs for root CA
+resource "vault_pki_secret_backend_config_urls" "root" {
+  backend = vault_mount.root.path
+  issuing_certificates = [
+    "https://vault.primary-vault.svc.cluster.local:8200/v1/root-ca/ca"
+  ]
+  crl_distribution_points = [
+    "https://vault.primary-vault.svc.cluster.local:8200/v1/root-ca/crl"
+  ]
+  enable_templating = true
 }
 
 resource "vault_mount" "intermediate" {
@@ -48,6 +60,40 @@ resource "vault_pki_secret_backend_root_sign_intermediate" "intermediate_signing
 resource "vault_pki_secret_backend_intermediate_set_signed" "intermediate" {
   backend     = vault_mount.intermediate.path
   certificate = vault_pki_secret_backend_root_sign_intermediate.intermediate_signing.certificate
+}
+
+# Configure cluster URLs for intermediate CA
+resource "vault_pki_secret_backend_config_cluster" "intermediate" {
+  backend  = vault_mount.intermediate.path
+  path     = "https://vault.primary-vault.svc.cluster.local:8200/v1/intermediate-ca"
+  aia_path = "https://vault.primary-vault.svc.cluster.local:8200/v1/intermediate-ca"
+}
+
+# Configure URLs for intermediate CA
+resource "vault_pki_secret_backend_config_urls" "intermediate" {
+  backend = vault_mount.intermediate.path
+  issuing_certificates = [
+    "https://vault.primary-vault.svc.cluster.local:8200/v1/intermediate-ca/ca"
+  ]
+  crl_distribution_points = [
+    "https://vault.primary-vault.svc.cluster.local:8200/v1/intermediate-ca/crl"
+  ]
+  ocsp_servers = [
+    "https://vault.primary-vault.svc.cluster.local:8200/v1/intermediate-ca/ocsp"
+  ]
+  enable_templating = true
+}
+
+# Configure ACME for intermediate CA
+resource "vault_pki_secret_backend_config_acme" "intermediate" {
+  backend                  = vault_mount.intermediate.path
+  enabled                  = true
+  allowed_issuers          = ["*"]
+  allowed_roles            = ["*"]
+  allow_role_ext_key_usage = true
+  default_directory_policy = "sign-verbatim"
+  dns_resolver             = ""
+  eab_policy               = "not-required"
 }
 
 resource "vault_pki_secret_backend_role" "base_role" {
