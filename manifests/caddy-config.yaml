@@ -16,21 +16,350 @@ data:
     }
   index.html: |
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
-        <title>HashiBank - Caddy Server</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>HashiBank - ACME & Vault PKI Demo</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+        <script>
+            tailwind.config = {
+                theme: {
+                    extend: {
+                        colors: {
+                            vault: {
+                                50: '#f0f9ff',
+                                100: '#e0f2fe',
+                                500: '#0ea5e9',
+                                600: '#0284c7',
+                                700: '#0369a1',
+                                800: '#075985',
+                                900: '#0c4a6e'
+                            },
+                            hashibank: {
+                                50: '#f8fafc',
+                                100: '#f1f5f9',
+                                500: '#667eea',
+                                600: '#5a67d8',
+                                700: '#4c51bf',
+                                800: '#434190',
+                                900: '#3c366b'
+                            }
+                        },
+                        animation: {
+                            'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                            'fade-in': 'fadeIn 0.5s ease-in-out',
+                            'slide-up': 'slideUp 0.5s ease-out'
+                        },
+                        keyframes: {
+                            fadeIn: {
+                                '0%': { opacity: '0', transform: 'translateY(-10px)' },
+                                '100%': { opacity: '1', transform: 'translateY(0)' }
+                            },
+                            slideUp: {
+                                '0%': { opacity: '0', transform: 'translateY(20px)' },
+                                '100%': { opacity: '1', transform: 'translateY(0)' }
+                            }
+                        }
+                    }
+                }
+            }
+        </script>
         <style>
-            body { font-family: Arial, sans-serif; margin: 40px; }
-            .header { color: #1f2937; }
-            .vault-info { background: #f3f4f6; padding: 20px; border-radius: 8px; }
+            @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+            body { font-family: 'Inter', sans-serif; }
         </style>
     </head>
-    <body>
-        <h1 class="header">HashiBank Caddy Server</h1>
-        <div class="vault-info">
-            <h2>PKI Certificate Info</h2>
-            <p>This server uses certificates from HashiCorp Vault PKI engine.</p>
-            <p>ACME CA: https://vault.primary-vault.svc.cluster.local:8200/v1/intermediate-ca/acme/directory</p>
+    <body class="bg-gradient-to-br from-hashibank-500 via-vault-600 to-hashibank-700 min-h-screen">
+        <div class="container mx-auto px-4 py-8 max-w-7xl">
+            <!-- Header -->
+            <header class="text-center text-white mb-12 py-12">
+                <h1 class="text-5xl md:text-6xl font-bold mb-4 drop-shadow-lg">
+                    🏦 HashiBank
+                </h1>
+                <p class="text-xl md:text-2xl opacity-90 font-light">
+                    ACME Certificate Automation with HashiCorp Vault PKI
+                </p>
+            </header>
+
+            <!-- Certificate Status Card -->
+            <div class="bg-white rounded-2xl shadow-2xl p-8 mb-8 transform hover:scale-[1.02] transition-all duration-300">
+                <div class="flex flex-col lg:flex-row items-start lg:items-center justify-between gap-6">
+                    <div class="flex-1">
+                        <div class="flex items-center gap-3 mb-4">
+                            <div class="w-3 h-3 bg-green-500 rounded-full animate-pulse-slow"></div>
+                            <h2 class="text-2xl font-bold text-gray-800">🔒 Certificate Status</h2>
+                        </div>
+                        <p class="text-gray-600 text-lg leading-relaxed">
+                            This server automatically obtains TLS certificates using the ACME protocol and HashiCorp Vault PKI engine
+                        </p>
+                    </div>
+                    <div class="bg-gradient-to-r from-green-500 to-green-600 text-white px-6 py-3 rounded-full font-semibold flex items-center gap-2 shadow-lg">
+                        <div class="w-2 h-2 bg-white rounded-full animate-pulse"></div>
+                        Certificate Active
+                    </div>
+                </div>
+                
+                <!-- Certificate Details Grid -->
+                <div class="grid grid-cols-2 lg:grid-cols-4 gap-4 mt-8">
+                    <div class="bg-hashibank-50 p-4 rounded-lg border-l-4 border-hashibank-500">
+                        <div class="font-semibold text-gray-800 mb-1">Domain</div>
+                        <div class="text-hashibank-700 font-mono text-sm">caddy.hashibank.com</div>
+                    </div>
+                    <div class="bg-vault-50 p-4 rounded-lg border-l-4 border-vault-500">
+                        <div class="font-semibold text-gray-800 mb-1">Protocol</div>
+                        <div class="text-vault-700 font-mono text-sm">ACME v2</div>
+                    </div>
+                    <div class="bg-purple-50 p-4 rounded-lg border-l-4 border-purple-500">
+                        <div class="font-semibold text-gray-800 mb-1">CA Authority</div>
+                        <div class="text-purple-700 font-mono text-sm">Vault PKI Engine</div>
+                    </div>
+                    <div class="bg-green-50 p-4 rounded-lg border-l-4 border-green-500">
+                        <div class="font-semibold text-gray-800 mb-1">Auto-Renewal</div>
+                        <div class="text-green-700 font-mono text-sm">Enabled</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- ACME Process Flow -->
+            <div class="bg-white rounded-2xl shadow-2xl p-8 mb-8">
+                <div class="text-center mb-8">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">🔄 How ACME + Vault PKI Works</h2>
+                    <p class="text-gray-600 text-lg">Click on each step to explore the certificate automation process</p>
+                </div>
+                
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="process-steps">
+                    <div class="step-card bg-gradient-to-br from-blue-50 to-blue-100 border-2 border-blue-200 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105" onclick="showStepInfo(1)">
+                        <div class="flex items-center justify-center w-12 h-12 bg-blue-500 text-white rounded-full font-bold text-lg mb-4 mx-auto">1</div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2 text-center">Certificate Request</h3>
+                        <p class="text-gray-600 text-sm text-center">Caddy identifies need for TLS certificate</p>
+                    </div>
+                    
+                    <div class="step-card bg-gradient-to-br from-purple-50 to-purple-100 border-2 border-purple-200 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105" onclick="showStepInfo(2)">
+                        <div class="flex items-center justify-center w-12 h-12 bg-purple-500 text-white rounded-full font-bold text-lg mb-4 mx-auto">2</div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2 text-center">ACME Challenge</h3>
+                        <p class="text-gray-600 text-sm text-center">Client initiates challenge with Vault PKI</p>
+                    </div>
+                    
+                    <div class="step-card bg-gradient-to-br from-green-50 to-green-100 border-2 border-green-200 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105" onclick="showStepInfo(3)">
+                        <div class="flex items-center justify-center w-12 h-12 bg-green-500 text-white rounded-full font-bold text-lg mb-4 mx-auto">3</div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2 text-center">Domain Validation</h3>
+                        <p class="text-gray-600 text-sm text-center">Vault validates domain ownership</p>
+                    </div>
+                    
+                    <div class="step-card bg-gradient-to-br from-orange-50 to-orange-100 border-2 border-orange-200 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105" onclick="showStepInfo(4)">
+                        <div class="flex items-center justify-center w-12 h-12 bg-orange-500 text-white rounded-full font-bold text-lg mb-4 mx-auto">4</div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2 text-center">Certificate Issuance</h3>
+                        <p class="text-gray-600 text-sm text-center">Vault PKI signs and issues certificate</p>
+                    </div>
+                    
+                    <div class="step-card bg-gradient-to-br from-teal-50 to-teal-100 border-2 border-teal-200 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105" onclick="showStepInfo(5)">
+                        <div class="flex items-center justify-center w-12 h-12 bg-teal-500 text-white rounded-full font-bold text-lg mb-4 mx-auto">5</div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2 text-center">Auto-Deployment</h3>
+                        <p class="text-gray-600 text-sm text-center">Certificate deployed automatically</p>
+                    </div>
+                    
+                    <div class="step-card bg-gradient-to-br from-indigo-50 to-indigo-100 border-2 border-indigo-200 rounded-xl p-6 cursor-pointer transition-all duration-300 hover:shadow-lg hover:scale-105" onclick="showStepInfo(6)">
+                        <div class="flex items-center justify-center w-12 h-12 bg-indigo-500 text-white rounded-full font-bold text-lg mb-4 mx-auto">6</div>
+                        <h3 class="text-lg font-semibold text-gray-800 mb-2 text-center">Auto-Renewal</h3>
+                        <p class="text-gray-600 text-sm text-center">Seamless certificate renewal</p>
+                    </div>
+                </div>
+                
+                <!-- Step Info Panel -->
+                <div id="step-info" class="hidden mt-8 bg-gray-900 text-white rounded-xl p-6 animate-fade-in">
+                    <div id="step-content" class="font-mono text-sm"></div>
+                </div>
+            </div>
+
+            <!-- Technology Stack -->
+            <div class="bg-white rounded-2xl shadow-2xl p-8 mb-8">
+                <h2 class="text-3xl font-bold text-gray-800 mb-6 text-center">🛠️ Technology Stack</h2>
+                <div class="flex flex-wrap justify-center gap-3">
+                    <span class="bg-gradient-to-r from-hashibank-500 to-hashibank-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">HashiCorp Vault</span>
+                    <span class="bg-gradient-to-r from-purple-500 to-purple-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">PKI Secret Engine</span>
+                    <span class="bg-gradient-to-r from-vault-500 to-vault-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">ACME Protocol</span>
+                    <span class="bg-gradient-to-r from-green-500 to-green-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">Caddy Web Server</span>
+                    <span class="bg-gradient-to-r from-blue-500 to-blue-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">cert-manager</span>
+                    <span class="bg-gradient-to-r from-indigo-500 to-indigo-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">Kubernetes</span>
+                    <span class="bg-gradient-to-r from-teal-500 to-teal-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">Nginx Ingress</span>
+                    <span class="bg-gradient-to-r from-cyan-500 to-cyan-600 text-white px-4 py-2 rounded-full text-sm font-medium shadow-lg">Tailwind CSS</span>
+                </div>
+            </div>
+
+            <!-- Interactive Certificate Inspector -->
+            <div class="bg-gradient-to-br from-cyan-50 to-blue-50 border-2 border-dashed border-cyan-300 rounded-2xl p-8">
+                <div class="text-center mb-6">
+                    <h2 class="text-3xl font-bold text-gray-800 mb-4">🔍 Interactive Certificate Inspector</h2>
+                    <p class="text-gray-600 text-lg">Explore the technical details of this certificate automation</p>
+                </div>
+                
+                <div class="flex flex-wrap justify-center gap-4 mb-6">
+                    <button onclick="showCertInfo()" class="bg-gradient-to-r from-hashibank-500 to-hashibank-600 hover:from-hashibank-600 hover:to-hashibank-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                        View Certificate Chain
+                    </button>
+                    <button onclick="showVaultInfo()" class="bg-gradient-to-r from-purple-500 to-purple-600 hover:from-purple-600 hover:to-purple-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                        Vault PKI Details
+                    </button>
+                    <button onclick="showACMEInfo()" class="bg-gradient-to-r from-vault-500 to-vault-600 hover:from-vault-600 hover:to-vault-700 text-white px-6 py-3 rounded-lg font-medium transition-all duration-300 shadow-lg hover:shadow-xl transform hover:-translate-y-1">
+                        ACME Configuration
+                    </button>
+                </div>
+                
+                <div id="interactive-info" class="hidden bg-gray-900 text-white rounded-xl p-6 animate-fade-in">
+                    <div id="interactive-content" class="font-mono text-sm"></div>
+                </div>
+            </div>
         </div>
+        
+        <script>
+            const stepInfo = {
+                1: {
+                    title: "Certificate Request Initiated",
+                    content: "When Caddy starts or detects a new domain configuration:\\n" +
+                        "- Checks for existing valid certificate\\n" +
+                        "- Identifies ACME CA endpoint: https://vault.primary-vault.svc.cluster.local:8200/v1/intermediate-ca/acme/directory\\n" +
+                        "- Prepares certificate signing request (CSR)\\n" +
+                        "- Initiates ACME protocol handshake"
+                },
+                2: {
+                    title: "ACME Challenge Process",
+                    content: "ACME client communicates with Vault PKI:\\n" +
+                        "- Sends account registration to ACME endpoint\\n" +
+                        "- Requests authorization for domain: caddy.hashibank.com\\n" +
+                        "- Vault responds with challenge requirements\\n" +
+                        "- Challenge type: HTTP-01 (domain validation via web)"
+                },
+                3: {
+                    title: "Domain Ownership Validation",
+                    content: "Vault validates domain control:\\n" +
+                        "- Places challenge token at /.well-known/acme-challenge/\\n" +
+                        "- Vault makes HTTP request to verify token\\n" +
+                        "- Confirms applicant controls the domain\\n" +
+                        "- Authorization granted for certificate issuance"
+                },
+                4: {
+                    title: "Certificate Signing & Issuance",
+                    content: "Vault PKI Engine processes request:\\n" +
+                        "- Validates CSR against policy rules\\n" +
+                        "- Signs certificate using intermediate CA\\n" +
+                        "- Certificate includes: SAN, validity period, key usage\\n" +
+                        "- Returns certificate chain to ACME client"
+                },
+                5: {
+                    title: "Automatic Certificate Deployment",
+                    content: "Caddy handles certificate installation:\\n" +
+                        "- Receives certificate and private key\\n" +
+                        "- Updates TLS configuration dynamically\\n" +
+                        "- Begins serving HTTPS traffic immediately\\n" +
+                        "- No manual intervention or restart required"
+                },
+                6: {
+                    title: "Automated Renewal Process",
+                    content: "Continuous certificate lifecycle management:\\n" +
+                        "- Monitors certificate expiration (typically 30 days before)\\n" +
+                        "- Automatically initiates renewal process\\n" +
+                        "- Seamless certificate replacement\\n" +
+                        "- Maintains zero-downtime operations"
+                }
+            };
+            
+            function showStepInfo(step) {
+                // Remove active states
+                document.querySelectorAll('.step-card').forEach(card => {
+                    card.classList.remove('ring-4', 'ring-hashibank-300', 'scale-105');
+                });
+                
+                // Add active state to clicked step
+                event.target.closest('.step-card').classList.add('ring-4', 'ring-hashibank-300', 'scale-105');
+                
+                const info = stepInfo[step];
+                const panel = document.getElementById('step-info');
+                const content = document.getElementById('step-content');
+                
+                content.innerHTML = '<h3 class="text-lg font-bold mb-4 text-hashibank-400">' + info.title + '</h3>' +
+                                   '<pre class="whitespace-pre-wrap leading-relaxed">' + info.content + '</pre>';
+                
+                panel.classList.remove('hidden');
+                panel.classList.add('animate-slide-up');
+            }
+            
+            function showCertInfo() {
+                showInteractiveInfo(
+                    '🔗 Certificate Chain Information',
+                    'Root CA: lab-root-ca\\n' +
+                    '├── Intermediate CA: intermediate-ca\\n' +
+                    '    └── End Entity: caddy.hashibank.com\\n\\n' +
+                    'Certificate Details:\\n' +
+                    '- Subject: CN=caddy.hashibank.com\\n' +
+                    '- Issuer: intermediate-ca\\n' +
+                    '- Signature Algorithm: RSA-SHA256\\n' +
+                    '- Key Usage: Digital Signature, Key Encipherment\\n' +
+                    '- Extended Key Usage: Server Authentication\\n' +
+                    '- Validity: 90 days (auto-renewable)'
+                );
+            }
+            
+            function showVaultInfo() {
+                showInteractiveInfo(
+                    '🏛️ HashiCorp Vault PKI Configuration',
+                    'PKI Mount Path: intermediate-ca/\\n' +
+                    'ACME Endpoint: /v1/intermediate-ca/acme/directory\\n' +
+                    'Cluster URLs: https://vault.primary-vault.svc.cluster.local:8200\\n\\n' +
+                    'Configuration:\\n' +
+                    '- ACME enabled: true\\n' +
+                    '- EAB Policy: not-required\\n' +
+                    '- Allowed issuers: ["*"]\\n' +
+                    '- Default TTL: 90 days\\n' +
+                    '- Max TTL: 1 year\\n' +
+                    '- Role: dev-role\\n\\n' +
+                    'Security Features:\\n' +
+                    '- Automatic certificate lifecycle management\\n' +
+                    '- Policy-based certificate issuance\\n' +
+                    '- Audit logging of all certificate operations\\n' +
+                    '- Integration with Kubernetes secrets'
+                );
+            }
+            
+            function showACMEInfo() {
+                showInteractiveInfo(
+                    '⚙️ ACME Protocol Configuration',
+                    'ACME Directory URL:\\n' +
+                    'https://vault.primary-vault.svc.cluster.local:8200/v1/intermediate-ca/acme/directory\\n\\n' +
+                    'ACME Endpoints:\\n' +
+                    '- New Account: /acme/new-account\\n' +
+                    '- New Order: /acme/new-order\\n' +
+                    '- Authorization: /acme/authz/\\n' +
+                    '- Challenge: /acme/challenge/\\n' +
+                    '- Certificate: /acme/cert/\\n\\n' +
+                    'Challenge Types Supported:\\n' +
+                    '- HTTP-01: Domain validation via web challenge\\n' +
+                    '- DNS-01: Domain validation via DNS record\\n\\n' +
+                    'Client Configuration:\\n' +
+                    '- Server: Caddy v2.x with ACME support\\n' +
+                    '- Challenge Response: Automatic HTTP-01 handling\\n' +
+                    '- Key Type: RSA 2048-bit or ECDSA P-256\\n' +
+                    '- Renewal: 30 days before expiration'
+                );
+            }
+            
+            function showInteractiveInfo(title, content) {
+                const panel = document.getElementById('interactive-info');
+                const contentDiv = document.getElementById('interactive-content');
+                
+                contentDiv.innerHTML = '<h3 class="text-lg font-bold mb-4 text-cyan-400">' + title + '</h3>' +
+                                      '<pre class="whitespace-pre-wrap leading-relaxed">' + content + '</pre>';
+                
+                panel.classList.remove('hidden');
+                panel.classList.add('animate-slide-up');
+            }
+            
+            // Auto-show first step on page load
+            window.addEventListener('load', function() {
+                setTimeout(function() { 
+                    document.querySelector('.step-card').click();
+                }, 1000);
+            });
+        </script>
     </body>
     </html>
