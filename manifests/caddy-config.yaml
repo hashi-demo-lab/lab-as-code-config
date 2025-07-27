@@ -1,0 +1,36 @@
+# caddy-config.yaml
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: caddy-config
+  namespace: hashibank
+data:
+  Caddyfile: |
+    {
+      auto_https off
+    }
+
+    :80 {
+      root * /usr/share/caddy
+      file_server browse
+    }
+  index.html: |
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>HashiBank - Caddy Server</title>
+        <style>
+            body { font-family: Arial, sans-serif; margin: 40px; }
+            .header { color: #1f2937; }
+            .vault-info { background: #f3f4f6; padding: 20px; border-radius: 8px; }
+        </style>
+    </head>
+    <body>
+        <h1 class="header">HashiBank Caddy Server</h1>
+        <div class="vault-info">
+            <h2>PKI Certificate Info</h2>
+            <p>This server uses certificates from HashiCorp Vault PKI engine.</p>
+            <p>ACME CA: https://vault.primary-vault.svc.cluster.local:8200/v1/intermediate-ca/acme/directory</p>
+        </div>
+    </body>
+    </html>

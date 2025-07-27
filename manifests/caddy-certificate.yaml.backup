@@ -1,0 +1,14 @@
+# caddy-certificate.yaml
+apiVersion: cert-manager.io/v1
+kind: Certificate
+metadata:
+  name: caddy-hashibank-com
+  namespace: hashibank
+spec:
+  secretName: caddy-hashibank-com-tls
+  issuerRef:
+    name: vault-issuer-v2
+    kind: Issuer
+  commonName: caddy.hashibank.com
+  dnsNames:
+  - caddy.hashibank.com

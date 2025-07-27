@@ -1,0 +1,27 @@
+# caddy-ingress.yaml
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: caddy-ingress
+  namespace: hashibank
+  annotations:
+    nginx.ingress.kubernetes.io/ssl-redirect: "false"
+    cert-manager.io/issuer: "vault-issuer-v2"
+    cert-manager.io/common-name: "caddy.hashibank.com"
+spec:
+  ingressClassName: nginx
+  rules:
+  - host: caddy.hashibank.com
+    http:
+      paths:
+      - path: /
+        pathType: Prefix
+        backend:
+          service:
+            name: caddy-service
+            port:
+              number: 80
+  tls:
+  - hosts:
+    - caddy.hashibank.com
+    secretName: caddy-hashibank-com-tls
