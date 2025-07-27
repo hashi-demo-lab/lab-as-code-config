@@ -1,53 +1,69 @@
-# # Get all YAML files in the specified directory
-# locals {
-#   manifest_files = fileset(var.manifest_directory, "*.yaml")
-  
-#   # Convert manifest_files set to a map with all values set to true
-#   manifest_files_map = {
-#     for file in local.manifest_files : file => true
-#   }
-  
-#   # Determine which manifests to deploy based on enable_manifests variable
-#   # If enable_manifests is empty, use all manifests from manifest_files_map
-#   # Otherwise, overlay the enable_manifests values onto manifest_files_map
-#   manifests_to_deploy = length(var.enable_manifests) == 0 ? local.manifest_files_map : {
-#     for file in local.manifest_files :
-#     file => lookup(var.enable_manifests, file, lookup(var.enable_manifests, basename(file), true))
-#   }
-# }
-
-# # Read and decode each manifest file
-# locals {
-#   dummy_manifest = provider::kubernetes::manifest_decode_multi("")
-
-#   decoded_manifests = flatten([
-#     for file in local.manifest_files :
-#     (
-#       lookup(local.manifests_to_deploy, file, false)
-#       ? provider::kubernetes::manifest_decode_multi(file("${var.manifest_directory}/${file}"))
-#       : local.dummy_manifest
-#     )
-#   ])
-# }
+# Simple Kubernetes manifest deployment module
+# Processes both .yaml files and .yaml.tpl templates
 
 locals {
-  manifest_files = var.kubernetes_manifests_enabled ? fileset(var.manifest_directory, "*.yaml") : []
+  # Get all YAML files (excluding generated files)
+  yaml_files = toset([
+    for file in fileset(var.manifest_directory, "*.yaml") :
+    file if !endswith(file, "-generated.yaml")
+  ])
+  
+  # Get all template files  
+  template_files = fileset(var.manifest_directory, "*.yaml.tpl")
+  
+  # Process template files
+  rendered_templates = {
+    for file in local.template_files :
+    replace(file, ".tpl", "") => templatefile("${var.manifest_directory}/${file}", {
+      ca_bundle    = base64encode(var.root_ca_cert)
+      vault_server = var.vault_server_url
+    })
+  }
+  
+  # Read regular YAML files
+  yaml_contents = {
+    for file in local.yaml_files :
+    file => file("${var.manifest_directory}/${file}")
+  }
+  
+  # Combine all manifests (templates + regular yaml files)
+  all_manifests = merge(local.yaml_contents, local.rendered_templates)
+  
+  # Decode all manifests into Kubernetes resources with unique keys
   decoded_manifests = flatten([
-    for file in local.manifest_files :
-    provider::kubernetes::manifest_decode_multi(file("${var.manifest_directory}/${file}"))
+    for filename, content in local.all_manifests : [
+      for idx, manifest in provider::kubernetes::manifest_decode_multi(content) : {
+        key      = "${filename}-${idx}-${manifest.kind}-${lookup(manifest.metadata, "namespace", "default")}-${manifest.metadata.name}"
+        manifest = manifest
+      }
+    ]
   ])
 }
 
-# Create Kubernetes resources for each manifest
+# Write rendered templates to disk for debugging/reference
+resource "local_file" "rendered_templates" {
+  for_each = local.rendered_templates
+  
+  content  = each.value
+  filename = "${path.root}/manifests/${each.key}-generated.yaml"
+}
+
+# Deploy all Kubernetes resources
 resource "kubernetes_manifest" "resources" {
   for_each = {
-    for manifest in local.decoded_manifests :
-    "${manifest.kind}-${lookup(manifest.metadata, "namespace", "default")}-${manifest.metadata.name}" => manifest
+    for item in local.decoded_manifests :
+    item.key => item.manifest
   }
 
   manifest = each.value
 }
 
 output "applied_manifests" {
-  value = { for k, v in kubernetes_manifest.resources : k => v.object }
+  description = "List of applied Kubernetes manifests"
+  value = {
+    yaml_files      = local.yaml_files
+    template_files  = local.template_files
+    total_resources = length(local.decoded_manifests)
+    resources       = { for k, v in kubernetes_manifest.resources : k => v.object }
+  }
 }
