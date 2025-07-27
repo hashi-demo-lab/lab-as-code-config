@@ -4,14 +4,13 @@ variable "manifest_directory" {
   default     = "./manifests"
 }
 
-variable "enable_manifests" {
-  description = "Map of manifest file names to boolean indicating whether they should be deployed"
-  type        = map(bool)
-  default     = {}
+variable "root_ca_cert" {
+  description = "Root CA certificate content for template substitution"
+  type        = string
 }
 
-variable "kubernetes_manifests_enabled" {
-  description = "Enable or disable applying Kubernetes manifests"
-  type        = bool
-  default     = true
+variable "vault_server_url" {
+  description = "Vault server URL for template substitution"
+  type        = string
+  default     = "https://vault.vault.svc.cluster.local:8200"
 }
