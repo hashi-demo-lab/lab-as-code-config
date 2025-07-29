@@ -1,3 +1,35 @@
+/**
+ * This Mermaid diagram represents the relationships and flows between various components
+ * in a Vault identity and authentication system. It includes the following sections:
+ *
+ * 1. **Styling Definitions**:
+ *    - Defines custom styles for different types of nodes such as entities, aliases, backends,
+ *      groups, policies, and external components.
+ *
+ * 2. **Core Identity**:
+ *    - Represents the main Vault identity entity (`aaron`) and its associated policy.
+ *
+ * 3. **LDAP Flow**:
+ *    - Illustrates the LDAP-based authentication flow, including:
+ *      - Vault components such as LDAP aliases, backends, and groups.
+ *      - External LDAP components such as the LDAP server, groups, and users.
+ *    - Shows relationships like alias authentication, group membership, and policy assignments.
+ *
+ * 4. **OIDC/GitLab Flow**:
+ *    - Depicts the OIDC-based authentication flow integrated with GitLab, including:
+ *      - Vault components such as OIDC aliases, backends, roles, and groups.
+ *      - External GitLab components such as GitLab users and project groups.
+ *    - Highlights relationships such as alias authentication, role definitions, group linking,
+ *      and policy assignments.
+ *
+ * 5. **Relationships**:
+ *    - Defines the connections between entities, aliases, backends, groups, policies, and
+ *      external systems for both LDAP and OIDC flows.
+ *
+ * 6. **Styling Application**:
+ *    - Applies the defined styles to the respective nodes in the diagram for better visualization.
+ */
+ 
 graph TD
     %% Styling
     classDef entity fill:#e1f5fe,stroke:#01579b,stroke-width:2px
