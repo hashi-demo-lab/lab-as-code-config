@@ -62,3 +62,18 @@ variable "kubernetes_manifests_enabled" {
   }
 }
 
+variable "aaron_oidc_alias" {
+  description = "OIDC Alias for Aaron"
+  type        = string
+}
+
+variable "simon_oidc_alias" {
+  description = "OIDC Alias for Simon"
+  type        = string
+}
+
+variable "tony_oidc_alias" {
+  description = "OIDC Alias for Tony"
+  type        = string
+}
+
