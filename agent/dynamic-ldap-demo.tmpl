@@ -1,0 +1,4 @@
+{{- with secret "ldap/creds/db_sa" }}
+username: "{{ .Data.username }}"
+password: "{{ .Data.password }}"
+{{- end }}
