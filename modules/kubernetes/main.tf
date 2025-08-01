@@ -15,8 +15,13 @@ locals {
   rendered_templates = {
     for file in local.template_files :
     replace(file, ".tpl", "") => templatefile("${var.manifest_directory}/${file}", {
-      ca_bundle    = base64encode(var.root_ca_cert)
-      vault_server = var.vault_server_url
+      ca_bundle         = base64encode(var.root_ca_cert)
+      vault_server      = var.vault_server_url
+      nextjs_image      = var.nextjs_image
+      nextjs_tag        = var.nextjs_tag
+      app_domain        = var.app_domain
+      cert_issuer       = var.cert_issuer
+      app_domain_secret = var.app_domain_secret
     })
   }
   
