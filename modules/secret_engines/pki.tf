@@ -89,11 +89,17 @@ resource "vault_pki_secret_backend_config_acme" "intermediate" {
   backend                  = vault_mount.intermediate.path
   enabled                  = true
   allowed_issuers          = ["*"]
-  allowed_roles            = ["*"]
+  allowed_roles            = ["acme"]
   allow_role_ext_key_usage = true
-  default_directory_policy = "sign-verbatim"
+  default_directory_policy = "role:acme"
   dns_resolver             = ""
   eab_policy               = "not-required"
+  
+  depends_on = [
+    vault_pki_secret_backend_config_cluster.intermediate,
+    vault_pki_secret_backend_config_urls.intermediate,
+    vault_pki_secret_backend_role.acme_role
+  ]
 }
 
 resource "vault_pki_secret_backend_role" "base_role" {
@@ -127,6 +133,27 @@ resource "vault_pki_secret_backend_role" "prod_role" {
   allowed_domains  = ["prod.example.com"]
   allow_subdomains = true
   max_ttl          = 259200
+}
+
+# ACME Role for cluster services and external domains
+resource "vault_pki_secret_backend_role" "acme_role" {
+  backend          = vault_mount.intermediate.path
+  name             = "acme"
+  allowed_domains  = ["hashibank.com", "svc.cluster.local"]
+  allow_subdomains = true
+  allow_any_name   = false
+  max_ttl          = 86400  # 24 hours
+  ttl              = 3600   # 1 hour default
+  allow_ip_sans    = false
+  key_type         = "any"  # Allow both RSA and ECDSA
+  key_bits         = 0      # Use default for each key type
+  
+  # Allow both external and internal names
+  allow_localhost = true
+  
+  # For ACME challenges
+  server_flag = true
+  client_flag = true
 }
 
 resource "vault_mount" "pki_codesigning" {
