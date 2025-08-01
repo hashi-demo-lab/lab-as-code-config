@@ -35,6 +35,9 @@ module "identities" {
   kubernetes_accessor = module.auth.kubernetes_accessor
   tfc_accessor        = module.auth.tfc_accessor
   cert_accessor       = module.auth.cert_accessor
+  aaron_oidc_alias    = var.aaron_oidc_alias
+  simon_oidc_alias    = var.simon_oidc_alias
+  tony_oidc_alias     = var.tony_oidc_alias
 
   depends_on = [module.auth]
 }
@@ -49,5 +52,11 @@ module "kubernetes_resources" {
   source             = "./modules/kubernetes"
   depends_on         = [module.auth]
   manifest_directory = "./manifests"
-  enable_manifests   = var.kubernetes_manifests_enabled
+  root_ca_cert       = data.local_file.root_ca_cert.content
+  vault_server_url   = "https://vault.primary-vault.svc.cluster.local:8200"
+  nextjs_image       = var.nextjs_image
+  nextjs_tag         = var.nextjs_tag
+  app_domain         = var.app_domain
+  cert_issuer        = var.cert_issuer
+  app_domain_secret  = var.app_domain_secret
 }
