@@ -77,3 +77,33 @@ variable "tony_oidc_alias" {
   type        = string
 }
 
+variable "nextjs_image" {
+  description = "Docker image for Next.js application"
+  type        = string
+  default     = "hashibank-nextjs"
+}
+
+variable "nextjs_tag" {
+  description = "Docker image tag for Next.js application"
+  type        = string
+  default     = "latest"
+}
+
+variable "app_domain" {
+  description = "Domain name for the application"
+  type        = string
+  default     = "caddy.hashibank.com"
+}
+
+variable "cert_issuer" {
+  description = "Certificate issuer for TLS certificates"
+  type        = string
+  default     = "vault-issuer"
+}
+
+variable "app_domain_secret" {
+  description = "Secret name for domain TLS certificate"
+  type        = string
+  default     = "caddy-hashibank-tls"
+}
+
